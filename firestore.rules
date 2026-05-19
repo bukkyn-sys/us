@@ -1,0 +1,130 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isGroupMember(groupId) {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/group_members/$(groupId + '_' + request.auth.uid));
+    }
+
+    // ── Users ──────────────────────────────────────────────────────────────────
+
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // ── Groups ─────────────────────────────────────────────────────────────────
+
+    match /groups/{groupId} {
+      allow read: if isGroupMember(groupId);
+      allow create: if isSignedIn();
+      allow update: if isGroupMember(groupId);
+    }
+
+    // ── Group Members ──────────────────────────────────────────────────────────
+
+    match /group_members/{docId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && request.auth.uid == resource.data.user_id;
+    }
+
+    // ── Mood check-ins ─────────────────────────────────────────────────────────
+
+    match /mood_checkins/{docId} {
+      allow read: if isSignedIn() && isGroupMember(resource.data.group_id);
+      allow write: if isSignedIn() && request.auth.uid == request.resource.data.user_id;
+      allow delete: if isSignedIn() && request.auth.uid == resource.data.user_id;
+    }
+
+    // ── Group note ─────────────────────────────────────────────────────────────
+
+    match /group_note/{groupId} {
+      allow read, write: if isGroupMember(groupId);
+    }
+
+    // ── Countdowns ─────────────────────────────────────────────────────────────
+
+    match /countdowns/{docId} {
+      allow read: if isSignedIn() && isGroupMember(resource.data.group_id);
+      allow create: if isSignedIn() && isGroupMember(request.resource.data.group_id);
+      allow update: if isSignedIn() && isGroupMember(resource.data.group_id);
+    }
+
+    // ── Availability ───────────────────────────────────────────────────────────
+
+    match /availability/{docId} {
+      allow read: if isSignedIn() && isGroupMember(resource.data.group_id);
+      allow write: if isSignedIn() && request.auth.uid == request.resource.data.user_id;
+      allow delete: if isSignedIn() && request.auth.uid == resource.data.user_id;
+    }
+
+    // ── List folders ───────────────────────────────────────────────────────────
+
+    match /list_folders/{folderId} {
+      allow read: if isSignedIn() &&
+        isGroupMember(resource.data.group_id) &&
+        !(request.auth.uid in resource.data.hidden_from);
+      allow create: if isSignedIn() && isGroupMember(request.resource.data.group_id);
+      allow update, delete: if isSignedIn() && isGroupMember(resource.data.group_id);
+    }
+
+    // ── List items ─────────────────────────────────────────────────────────────
+
+    match /list_items/{itemId} {
+      allow read: if isSignedIn() && isGroupMember(resource.data.group_id);
+      allow create: if isSignedIn() && isGroupMember(request.resource.data.group_id);
+      allow update: if isSignedIn() && isGroupMember(resource.data.group_id);
+    }
+
+    // ── Expenses ───────────────────────────────────────────────────────────────
+
+    match /expenses/{expenseId} {
+      allow read: if isSignedIn() && (
+        resource.data.paid_by == request.auth.uid ||
+        resource.data.splits.hasAny([{ user_id: request.auth.uid }])
+      );
+      allow create: if isSignedIn() && isGroupMember(request.resource.data.group_id);
+      allow update: if isSignedIn() && isGroupMember(resource.data.group_id);
+    }
+
+    // ── Settlements ────────────────────────────────────────────────────────────
+
+    match /settlements/{docId} {
+      allow read: if isSignedIn() && (
+        resource.data.debtor_id == request.auth.uid ||
+        resource.data.creditor_id == request.auth.uid
+      );
+      allow create: if isSignedIn() && request.auth.uid == request.resource.data.debtor_id;
+    }
+
+    // ── Saving folders ─────────────────────────────────────────────────────────
+
+    match /saving_folders/{folderId} {
+      allow read, write: if isSignedIn() && isGroupMember(resource.data.group_id);
+      allow create: if isSignedIn() && isGroupMember(request.resource.data.group_id);
+    }
+
+    // ── Saving pots ────────────────────────────────────────────────────────────
+
+    match /saving_pots/{potId} {
+      allow read: if isSignedIn() && request.auth.uid in resource.data.viewers;
+      allow create: if isSignedIn() && isGroupMember(request.resource.data.group_id);
+      allow update: if isSignedIn() && request.auth.uid in resource.data.viewers;
+    }
+
+    // ── Pot contributions ──────────────────────────────────────────────────────
+
+    match /pot_contributions/{docId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.auth.uid == request.resource.data.user_id;
+    }
+  }
+}

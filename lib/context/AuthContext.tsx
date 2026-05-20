@@ -36,19 +36,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   async function loadProfile(u: User) {
-    let p = await getUser(u.id);
-    if (!p) {
-      // First sign-in: seed from OAuth metadata
-      const meta = u.user_metadata;
-      await upsertUser(u.id, {
-        display_name: meta?.full_name || meta?.name || u.email || "",
-        photo_url: meta?.avatar_url || meta?.picture || null,
-        accent_colour: "#C4A882",
-        active_group_id: null,
-      });
-      p = await getUser(u.id);
+    try {
+      let p = await getUser(u.id);
+      if (!p) {
+        const meta = u.user_metadata;
+        await upsertUser(u.id, {
+          display_name: meta?.full_name || meta?.name || u.email || "",
+          photo_url: meta?.avatar_url || meta?.picture || null,
+          accent_colour: "#C4A882",
+          active_group_id: null,
+        });
+        p = await getUser(u.id);
+      }
+      setProfile(p);
+    } catch {
+      setProfile(null);
     }
-    setProfile(p);
   }
 
   async function refreshProfile() {

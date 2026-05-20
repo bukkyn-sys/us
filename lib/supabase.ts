@@ -15,6 +15,7 @@ function getClient(): SupabaseClient {
           autoRefreshToken: true,
           persistSession: true,
           detectSessionInUrl: true,
+          flowType: "implicit",
         },
       }
     );

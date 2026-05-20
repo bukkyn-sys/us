@@ -2,21 +2,17 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { useAuthContext } from "@/lib/context/AuthContext";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
+  const { loading } = useAuthContext();
 
   useEffect(() => {
-    const code = new URLSearchParams(window.location.search).get("code");
-    if (code) {
-      supabase.auth.exchangeCodeForSession(code).then(() => {
-        router.replace("/");
-      });
-    } else {
+    if (!loading) {
       router.replace("/");
     }
-  }, [router]);
+  }, [loading, router]);
 
   return (
     <div className="min-h-screen bg-cream flex items-center justify-center">

@@ -40,8 +40,7 @@ export function OnboardingScreen() {
       <div className="w-full max-w-sm flex flex-col items-center gap-10">
         {/* wordmark */}
         <div className="flex flex-col items-center gap-3">
-          <span className="text-[42px] leading-none">🫶</span>
-          <h1 className="text-[32px] font-[500] tracking-[-1px] text-ink">us.</h1>
+          <h1 className="font-display text-[52px] font-[300] tracking-[-1px] text-ink leading-none">us.</h1>
           <p className="text-[14px] text-ink3 text-center leading-relaxed max-w-[220px]">
             A shared space for the people who matter most.
           </p>

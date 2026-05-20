@@ -1,9 +1,16 @@
 export const dynamic = "force-dynamic";
 
 import type { Metadata, Viewport } from "next";
+import { Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/context/AuthContext";
 import { ServiceWorkerRegistrar } from "@/components/ui/ServiceWorkerRegistrar";
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["300"],
+  variable: "--font-display",
+});
 
 export const metadata: Metadata = {
   title: "us.",
@@ -25,11 +32,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
+    <html lang="en" className={cormorant.variable}>
+      <head />
       <body className="bg-cream text-ink font-sans antialiased">
         <AuthProvider>
           <ServiceWorkerRegistrar />

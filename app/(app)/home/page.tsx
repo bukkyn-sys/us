@@ -36,7 +36,7 @@ export default function HomePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[22px] font-[500] tracking-[-0.5px] text-ink">
+          <h1 className="font-display text-[26px] font-[300] tracking-[-0.5px] text-ink leading-tight">
             {group?.name ?? "us."}
           </h1>
           <p className="text-[13px] text-ink3">

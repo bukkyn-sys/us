@@ -214,7 +214,7 @@ export default function SettingsPage() {
         Sign out
       </Button>
 
-      <p className="text-[11px] text-ink3 text-center">us. · v0.1</p>
+      <p className="text-ink3 text-center text-[13px]"><span className="font-display font-[300] tracking-[-0.3px]">us.</span> · v0.1</p>
     </motion.div>
   );
 }

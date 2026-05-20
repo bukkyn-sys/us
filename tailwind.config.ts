@@ -29,6 +29,7 @@ const config: Config = {
       },
       fontFamily: {
         caveat: ["Caveat", "cursive"],
+        display: ["var(--font-display)", "serif"],
       },
       fontSize: {
         heading: ["22px", { lineHeight: "1.2", letterSpacing: "-0.5px", fontWeight: "500" }],

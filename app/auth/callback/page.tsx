@@ -6,13 +6,18 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
-  const { loading } = useAuthContext();
+  const { user } = useAuthContext();
 
+  // Redirect as soon as the session arrives
   useEffect(() => {
-    if (!loading) {
-      router.replace("/");
-    }
-  }, [loading, router]);
+    if (user) router.replace("/");
+  }, [user, router]);
+
+  // Fallback: if no session after 10s, send to onboarding
+  useEffect(() => {
+    const t = setTimeout(() => router.replace("/onboarding"), 10000);
+    return () => clearTimeout(t);
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-cream flex items-center justify-center">

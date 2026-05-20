@@ -2,21 +2,30 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
+import { supabase } from "@/lib/supabase";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
-  const { user } = useAuthContext();
 
-  // Redirect as soon as the session arrives
   useEffect(() => {
-    if (user) router.replace("/");
-  }, [user, router]);
+    const hash = window.location.hash;
+    const params = new URLSearchParams(hash.replace("#", ""));
+    const accessToken = params.get("access_token");
+    const refreshToken = params.get("refresh_token");
 
-  // Fallback: if no session after 10s, send to onboarding
-  useEffect(() => {
-    const t = setTimeout(() => router.replace("/onboarding"), 10000);
-    return () => clearTimeout(t);
+    if (accessToken && refreshToken) {
+      supabase.auth
+        .setSession({ access_token: accessToken, refresh_token: refreshToken })
+        .then(({ error }) => {
+          router.replace(error ? "/onboarding" : "/");
+        })
+        .catch(() => router.replace("/onboarding"));
+    } else {
+      // No hash tokens — check if session already exists
+      supabase.auth.getSession().then(({ data }) => {
+        router.replace(data.session ? "/" : "/onboarding");
+      });
+    }
   }, [router]);
 
   return (

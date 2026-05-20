@@ -31,45 +31,45 @@ export function OnboardingScreen() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.18, ease: "easeOut" }}
-      className="min-h-screen bg-cream flex flex-col items-center justify-between px-6 py-16"
-      style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 64px)" }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className="min-h-screen bg-cream flex flex-col items-center justify-center px-6"
+      style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 48px)" }}
     >
-      <div />
-
-      <div className="flex flex-col items-center gap-4 text-center">
-        <div className="w-16 h-16 rounded-[18px] bg-accent-light flex items-center justify-center mb-2">
-          <span className="text-[28px]">🫶</span>
+      <div className="w-full max-w-sm flex flex-col items-center gap-10">
+        {/* wordmark */}
+        <div className="flex flex-col items-center gap-3">
+          <span className="text-[42px] leading-none">🫶</span>
+          <h1 className="text-[32px] font-[500] tracking-[-1px] text-ink">us.</h1>
+          <p className="text-[14px] text-ink3 text-center leading-relaxed max-w-[220px]">
+            A shared space for the people who matter most.
+          </p>
         </div>
-        <h1 className="text-[28px] font-[500] tracking-[-0.5px] text-ink">us.</h1>
-        <p className="text-[14px] text-ink2 max-w-[260px] leading-relaxed">
-          A shared space for the people who matter most.
-        </p>
-      </div>
 
-      <div className="w-full max-w-sm flex flex-col gap-3">
-        {error && (
-          <p className="text-[13px] text-red text-center">{error}</p>
-        )}
-        <button
-          onClick={handleSignIn}
-          disabled={signingIn}
-          className="w-full flex items-center justify-center gap-3 bg-card text-ink border-[0.5px] border-[rgba(44,40,32,0.12)] rounded-[14px] px-4 py-[13px] text-[14px] font-[500] transition-opacity active:opacity-70 disabled:opacity-40"
-        >
-          {!signingIn ? (
-            <>
-              <GoogleIcon />
-              Continue with Google
-            </>
-          ) : (
-            <span className="w-5 h-5 rounded-full border-2 border-ink border-t-transparent animate-spin" />
+        {/* sign-in */}
+        <div className="w-full flex flex-col gap-3">
+          {error && (
+            <p className="text-[13px] text-red text-center">{error}</p>
           )}
-        </button>
-        <p className="text-[11px] text-ink3 text-center leading-relaxed">
-          By continuing you agree to our Terms & Privacy Policy.
-        </p>
+          <button
+            onClick={handleSignIn}
+            disabled={signingIn}
+            className="w-full flex items-center justify-center gap-2.5 bg-card text-ink border-[0.5px] border-[rgba(44,40,32,0.12)] rounded-[14px] px-4 py-[14px] text-[14px] font-[500] transition-opacity active:opacity-70 disabled:opacity-40"
+          >
+            {!signingIn ? (
+              <>
+                <GoogleIcon />
+                Continue with Google
+              </>
+            ) : (
+              <span className="w-5 h-5 rounded-full border-2 border-ink border-t-transparent animate-spin" />
+            )}
+          </button>
+          <p className="text-[11px] text-ink3 text-center leading-relaxed">
+            By continuing you agree to our Terms &amp; Privacy Policy.
+          </p>
+        </div>
       </div>
     </motion.div>
   );

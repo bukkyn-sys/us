@@ -34,39 +34,47 @@ export function OnboardingScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex flex-col">
-      <div className="flex-1 flex flex-col items-center justify-center px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-          className="flex flex-col items-center gap-6 text-center"
-        >
-          <div className="w-[72px] h-[72px] rounded-[24px] bg-ink flex items-center justify-center">
-            <span className="font-display text-[30px] font-[300] text-cream leading-none tracking-[-1px]">u.</span>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <h1 className="font-display text-[52px] font-[300] tracking-[-2px] text-ink leading-none">us.</h1>
-            <p className="text-[15px] text-ink3 leading-relaxed">
-              A shared space for the people<br />who matter most.
-            </p>
-          </div>
-        </motion.div>
-      </div>
-
+    <div
+      className="bg-cream flex flex-col px-7 overflow-hidden"
+      style={{ height: "100dvh" }}
+    >
+      {/* Top — brand */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-        className="px-6 flex flex-col gap-3"
-        style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 52px)" }}
+        transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+        className="flex-1 flex flex-col justify-center"
       >
-        {error && <p className="text-[13px] text-red text-center">{error}</p>}
+        <h1
+          className="font-display font-[300] text-ink leading-none"
+          style={{ fontSize: "clamp(72px, 22vw, 108px)", letterSpacing: "-3px" }}
+        >
+          us.
+        </h1>
+        <p
+          className="font-display font-[300] text-ink2 leading-snug mt-4"
+          style={{ fontSize: "clamp(20px, 5.5vw, 26px)", letterSpacing: "-0.5px", maxWidth: "14ch" }}
+        >
+          for the people who matter most.
+        </p>
+      </motion.div>
+
+      {/* Bottom — actions */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
+        className="flex flex-col gap-3"
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 48px)" }}
+      >
+        {error && (
+          <p className="text-[13px] text-red text-center">{error}</p>
+        )}
         <button
           onClick={handleSignIn}
           disabled={signingIn}
           className="w-full flex items-center justify-center gap-3 bg-card text-ink border-[0.5px] border-[rgba(44,40,32,0.10)] rounded-[18px] px-5 py-[17px] text-[15px] font-[500] transition-opacity active:opacity-60 disabled:opacity-40"
-          style={{ boxShadow: "0 1px 4px rgba(44,40,32,0.06)" }}
+          style={{ boxShadow: "0 1px 4px rgba(44,40,32,0.07)" }}
         >
           {!signingIn ? (
             <>

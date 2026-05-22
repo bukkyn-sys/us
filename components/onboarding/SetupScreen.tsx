@@ -112,9 +112,9 @@ export function SetupScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex flex-col">
+    <div className="bg-cream flex flex-col overflow-hidden" style={{ height: "100dvh" }}>
       {/* Progress bar */}
-      <div className="h-[2px] bg-[rgba(44,40,32,0.07)]">
+      <div className="h-[2px] bg-[rgba(44,40,32,0.07)] flex-shrink-0">
         <motion.div
           className="h-full bg-ink"
           animate={{ width: `${progress}%` }}
@@ -123,10 +123,11 @@ export function SetupScreen() {
       </div>
 
       <div
-        className="flex-1 flex flex-col px-6 pt-8"
-        style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 40px)" }}
+        className="flex-1 flex flex-col px-6 pt-5 min-h-0"
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)" }}
       >
         <AnimatePresence mode="wait">
+
           {/* ── Step 1: Profile ─────────────────────────────────── */}
           {step === "profile" && (
             <motion.div
@@ -136,38 +137,34 @@ export function SetupScreen() {
               animate="center"
               exit="exit"
               transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
-              className="flex-1 flex flex-col"
+              className="flex-1 flex flex-col min-h-0"
             >
-              <div className="flex-1 flex flex-col justify-center gap-10 max-w-sm mx-auto w-full">
+              <div className="flex-1 flex flex-col justify-center gap-6 max-w-sm mx-auto w-full min-h-0">
                 <div>
-                  <p className="text-[10px] font-[600] uppercase tracking-[0.14em] text-ink3 mb-4">
+                  <p className="text-[10px] font-[600] uppercase tracking-[0.14em] text-ink3 mb-3">
                     1 of 3
                   </p>
-                  <h2 className="font-display text-[38px] font-[300] tracking-[-1.5px] text-ink leading-[1.1]">
+                  <h2 className="font-display text-[34px] font-[300] tracking-[-1.5px] text-ink leading-[1.1]">
                     What should<br />we call you?
                   </h2>
                 </div>
 
-                {/* Avatar */}
-                <div className="flex flex-col items-center gap-3">
-                  <button
-                    onClick={() => fileRef.current?.click()}
-                    className="relative"
-                  >
+                <div className="flex flex-col items-center gap-2">
+                  <button onClick={() => fileRef.current?.click()} className="relative">
                     <div
-                      className="w-[88px] h-[88px] rounded-full overflow-hidden flex items-center justify-center"
+                      className="w-[68px] h-[68px] rounded-full overflow-hidden flex items-center justify-center"
                       style={{ backgroundColor: accent + "30" }}
                     >
                       {photoUrl ? (
                         <img src={photoUrl} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-[32px] font-[300]" style={{ color: accent }}>
+                        <span className="text-[24px] font-[300]" style={{ color: accent }}>
                           {displayName ? displayName[0].toUpperCase() : "?"}
                         </span>
                       )}
                     </div>
-                    <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-ink flex items-center justify-center">
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <div className="absolute -bottom-0.5 -right-0.5 w-6 h-6 rounded-full bg-ink flex items-center justify-center">
+                      <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
                         <path d="M6 2.5V9.5M2.5 6H9.5" stroke="#F5F0E8" strokeWidth="1.5" strokeLinecap="round" />
                       </svg>
                     </div>
@@ -176,24 +173,21 @@ export function SetupScreen() {
                   <p className="text-[11px] text-ink3">Tap to add a photo</p>
                 </div>
 
-                {/* Name input */}
-                <div className="flex flex-col gap-2">
-                  <input
-                    type="text"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder="Your name"
-                    maxLength={40}
-                    autoFocus
-                    className="w-full bg-transparent border-b-[1.5px] border-[rgba(44,40,32,0.18)] focus:border-ink text-[26px] font-[300] tracking-[-0.5px] text-ink placeholder:text-ink3 pb-2 outline-none transition-colors"
-                  />
-                </div>
+                <input
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder="Your name"
+                  maxLength={40}
+                  autoFocus
+                  className="w-full bg-transparent border-b-[1.5px] border-[rgba(44,40,32,0.18)] focus:border-ink text-[24px] font-[300] tracking-[-0.5px] text-ink placeholder:text-ink3 pb-2 outline-none transition-colors"
+                />
               </div>
 
               <button
                 onClick={() => setStep("colour")}
                 disabled={!displayName.trim()}
-                className="w-full max-w-sm mx-auto bg-ink text-cream rounded-[18px] py-[17px] text-[15px] font-[500] transition-opacity disabled:opacity-25 active:opacity-70"
+                className="w-full max-w-sm mx-auto bg-ink text-cream rounded-[18px] py-[16px] text-[15px] font-[500] transition-opacity disabled:opacity-25 active:opacity-70 flex-shrink-0"
               >
                 Continue
               </button>
@@ -209,40 +203,35 @@ export function SetupScreen() {
               animate="center"
               exit="exit"
               transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
-              className="flex-1 flex flex-col"
+              className="flex-1 flex flex-col min-h-0"
             >
-              <div className="flex-1 flex flex-col justify-center gap-10 max-w-sm mx-auto w-full">
+              <div className="flex-1 flex flex-col justify-center gap-6 max-w-sm mx-auto w-full min-h-0">
                 <div>
-                  <p className="text-[10px] font-[600] uppercase tracking-[0.14em] text-ink3 mb-4">
+                  <p className="text-[10px] font-[600] uppercase tracking-[0.14em] text-ink3 mb-3">
                     2 of 3
                   </p>
-                  <h2 className="font-display text-[38px] font-[300] tracking-[-1.5px] text-ink leading-[1.1]">
+                  <h2 className="font-display text-[34px] font-[300] tracking-[-1.5px] text-ink leading-[1.1]">
                     Your colour
                   </h2>
-                  <p className="text-[14px] text-ink3 mt-2 leading-relaxed">
-                    Used as your accent across the app.
-                  </p>
+                  <p className="text-[13px] text-ink3 mt-1.5">Your accent across the app.</p>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-2.5">
                   {SWATCHES.map(({ colour, name }) => (
                     <button
                       key={colour}
                       onClick={() => setAccent(colour)}
-                      className="relative flex flex-col items-center gap-2.5 py-5 rounded-[20px] transition-all"
+                      className="relative flex flex-col items-center gap-2 py-4 rounded-[18px] transition-all"
                       style={{
                         backgroundColor: accent === colour ? colour + "20" : "rgba(44,40,32,0.03)",
                         border: `1.5px solid ${accent === colour ? colour : "rgba(44,40,32,0.08)"}`,
                       }}
                     >
-                      <div
-                        className="w-9 h-9 rounded-full"
-                        style={{ backgroundColor: colour }}
-                      />
+                      <div className="w-8 h-8 rounded-full" style={{ backgroundColor: colour }} />
                       <span className="text-[11px] font-[500] text-ink3">{name}</span>
                       {accent === colour && (
                         <div
-                          className="absolute top-2.5 right-2.5 w-4 h-4 rounded-full flex items-center justify-center"
+                          className="absolute top-2 right-2 w-4 h-4 rounded-full flex items-center justify-center"
                           style={{ backgroundColor: colour }}
                         >
                           <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
@@ -255,16 +244,16 @@ export function SetupScreen() {
                 </div>
               </div>
 
-              <div className="flex gap-3 max-w-sm mx-auto w-full">
+              <div className="flex gap-3 max-w-sm mx-auto w-full flex-shrink-0">
                 <button
                   onClick={() => setStep("profile")}
-                  className="flex-1 bg-[rgba(44,40,32,0.06)] text-ink rounded-[18px] py-[17px] text-[15px] font-[500] transition-opacity active:opacity-70"
+                  className="flex-1 bg-[rgba(44,40,32,0.06)] text-ink rounded-[18px] py-[16px] text-[15px] font-[500] transition-opacity active:opacity-70"
                 >
                   Back
                 </button>
                 <button
                   onClick={() => setStep("group")}
-                  className="flex-[2] bg-ink text-cream rounded-[18px] py-[17px] text-[15px] font-[500] transition-opacity active:opacity-70"
+                  className="flex-[2] bg-ink text-cream rounded-[18px] py-[16px] text-[15px] font-[500] transition-opacity active:opacity-70"
                 >
                   Continue
                 </button>
@@ -281,26 +270,20 @@ export function SetupScreen() {
               animate="center"
               exit="exit"
               transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
-              className="flex-1 flex flex-col"
+              className="flex-1 flex flex-col min-h-0"
             >
-              <div className="flex-1 flex flex-col justify-center gap-8 max-w-sm mx-auto w-full">
+              <div className="flex-1 flex flex-col justify-center gap-5 max-w-sm mx-auto w-full min-h-0">
                 <div>
-                  <p className="text-[10px] font-[600] uppercase tracking-[0.14em] text-ink3 mb-4">
+                  <p className="text-[10px] font-[600] uppercase tracking-[0.14em] text-ink3 mb-3">
                     3 of 3
                   </p>
-                  <h2 className="font-display text-[38px] font-[300] tracking-[-1.5px] text-ink leading-[1.1]">
+                  <h2 className="font-display text-[34px] font-[300] tracking-[-1.5px] text-ink leading-[1.1]">
                     Your space
                   </h2>
-                  <p className="text-[14px] text-ink3 mt-2 leading-relaxed">
-                    Create a new group or join one.
-                  </p>
+                  <p className="text-[13px] text-ink3 mt-1.5">Create a group or join one with a code.</p>
                 </div>
 
-                {/* Mode toggle */}
-                <div
-                  className="flex p-1 rounded-[14px]"
-                  style={{ backgroundColor: "rgba(44,40,32,0.06)" }}
-                >
+                <div className="flex p-1 rounded-[14px]" style={{ backgroundColor: "rgba(44,40,32,0.06)" }}>
                   {(["create", "join"] as const).map((mode) => (
                     <button
                       key={mode}
@@ -318,7 +301,7 @@ export function SetupScreen() {
                 </div>
 
                 {groupMode === "create" ? (
-                  <div className="flex flex-col gap-5">
+                  <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-1.5">
                       <label className="text-[10px] font-[600] uppercase tracking-[0.12em] text-ink3">
                         Group name
@@ -329,7 +312,7 @@ export function SetupScreen() {
                         onChange={(e) => setGroupName(e.target.value)}
                         placeholder="e.g. Us, The Fam, Our House"
                         maxLength={40}
-                        className="w-full bg-white border-[0.5px] border-[rgba(44,40,32,0.12)] rounded-[14px] px-4 py-3.5 text-[15px] text-ink placeholder:text-ink3 outline-none focus:border-[rgba(44,40,32,0.3)]"
+                        className="w-full bg-white border-[0.5px] border-[rgba(44,40,32,0.12)] rounded-[14px] px-4 py-3 text-[15px] text-ink placeholder:text-ink3 outline-none focus:border-[rgba(44,40,32,0.3)]"
                         style={{ boxShadow: "0 1px 3px rgba(44,40,32,0.04)" }}
                       />
                     </div>
@@ -342,7 +325,7 @@ export function SetupScreen() {
                           <button
                             key={t}
                             onClick={() => setGroupType(t)}
-                            className="flex-1 py-3 rounded-[14px] text-[14px] font-[500] border-[0.5px] transition-all"
+                            className="flex-1 py-2.5 rounded-[14px] text-[14px] font-[500] border-[0.5px] transition-all"
                             style={{
                               backgroundColor: groupType === t ? "#2C2820" : "white",
                               color: groupType === t ? "#F5F0E8" : "rgba(44,40,32,0.6)",
@@ -374,21 +357,21 @@ export function SetupScreen() {
                 )}
 
                 {error && (
-                  <p className="text-[13px] text-red text-center -mt-2">{error}</p>
+                  <p className="text-[13px] text-red text-center -mt-1">{error}</p>
                 )}
               </div>
 
-              <div className="flex gap-3 max-w-sm mx-auto w-full">
+              <div className="flex gap-3 max-w-sm mx-auto w-full flex-shrink-0">
                 <button
                   onClick={() => setStep("colour")}
-                  className="flex-1 bg-[rgba(44,40,32,0.06)] text-ink rounded-[18px] py-[17px] text-[15px] font-[500] transition-opacity active:opacity-70"
+                  className="flex-1 bg-[rgba(44,40,32,0.06)] text-ink rounded-[18px] py-[16px] text-[15px] font-[500] transition-opacity active:opacity-70"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleFinish}
                   disabled={submitting}
-                  className="flex-[2] bg-ink text-cream rounded-[18px] py-[17px] text-[15px] font-[500] transition-opacity disabled:opacity-50 active:opacity-70 flex items-center justify-center"
+                  className="flex-[2] bg-ink text-cream rounded-[18px] py-[16px] text-[15px] font-[500] transition-opacity disabled:opacity-50 active:opacity-70 flex items-center justify-center"
                 >
                   {submitting ? (
                     <span className="w-5 h-5 rounded-full border-2 border-cream border-t-transparent animate-spin" />
@@ -399,6 +382,7 @@ export function SetupScreen() {
               </div>
             </motion.div>
           )}
+
         </AnimatePresence>
       </div>
     </div>

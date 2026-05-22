@@ -328,22 +328,33 @@ export function SetupScreen() {
                       </div>
                     </div>
 
-                    {groupType === "group" && (
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-[10px] font-[600] uppercase tracking-[0.12em] text-ink3">
-                          Group name
-                        </label>
-                        <input
-                          type="text"
-                          value={groupName}
-                          onChange={(e) => setGroupName(e.target.value)}
-                          placeholder="e.g. The Fam, Our House"
-                          maxLength={40}
-                          className="w-full bg-white border-[0.5px] border-[rgba(44,40,32,0.12)] rounded-[14px] px-4 py-3 text-[15px] text-ink placeholder:text-ink3 outline-none focus:border-[rgba(44,40,32,0.3)]"
-                          style={{ boxShadow: "0 1px 3px rgba(44,40,32,0.04)" }}
-                        />
-                      </div>
-                    )}
+                    <AnimatePresence>
+                      {groupType === "group" && (
+                        <motion.div
+                          key="group-name"
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+                          style={{ overflow: "hidden" }}
+                        >
+                          <div className="flex flex-col gap-1.5 pt-1">
+                            <label className="text-[10px] font-[600] uppercase tracking-[0.12em] text-ink3">
+                              Group name
+                            </label>
+                            <input
+                              type="text"
+                              value={groupName}
+                              onChange={(e) => setGroupName(e.target.value)}
+                              placeholder="e.g. The Fam, Our House"
+                              maxLength={40}
+                              className="w-full bg-white border-[0.5px] border-[rgba(44,40,32,0.12)] rounded-[14px] px-4 py-3 text-[15px] text-ink placeholder:text-ink3 outline-none focus:border-[rgba(44,40,32,0.3)]"
+                              style={{ boxShadow: "0 1px 3px rgba(44,40,32,0.04)" }}
+                            />
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 ) : (
                   <div className="flex flex-col gap-1.5">

@@ -35,36 +35,36 @@ export function OnboardingScreen() {
 
   return (
     <div
-      className="bg-cream flex flex-col px-7 overflow-hidden"
+      className="bg-cream flex flex-col overflow-hidden"
       style={{ height: "100dvh" }}
     >
-      {/* Top — brand */}
+      {/* Centred hero */}
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-        className="flex-1 flex flex-col justify-center"
+        className="flex-1 flex flex-col items-center justify-center text-center px-8"
       >
         <h1
           className="font-display font-[300] text-ink leading-none"
-          style={{ fontSize: "clamp(72px, 22vw, 108px)", letterSpacing: "-3px" }}
+          style={{ fontSize: "clamp(80px, 24vw, 120px)", letterSpacing: "-3px" }}
         >
           us.
         </h1>
         <p
           className="font-display font-[300] text-ink2 leading-snug mt-4"
-          style={{ fontSize: "clamp(20px, 5.5vw, 26px)", letterSpacing: "-0.5px", maxWidth: "14ch" }}
+          style={{ fontSize: "clamp(18px, 5vw, 24px)", letterSpacing: "-0.4px" }}
         >
-          for the people who matter most.
+          for the people<br />who matter most.
         </p>
       </motion.div>
 
-      {/* Bottom — actions */}
+      {/* Bottom actions */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
-        className="flex flex-col gap-3"
+        transition={{ duration: 0.4, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+        className="px-6 flex flex-col gap-3 flex-shrink-0"
         style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 48px)" }}
       >
         {error && (

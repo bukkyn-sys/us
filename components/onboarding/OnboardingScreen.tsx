@@ -13,8 +13,6 @@ export function OnboardingScreen() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Supabase may redirect OAuth tokens to /onboarding instead of /auth/callback.
-    // Hard-redirect so the hash survives.
     if (window.location.hash.includes("access_token")) {
       window.location.replace("/auth/callback" + window.location.hash);
       return;
@@ -36,47 +34,54 @@ export function OnboardingScreen() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.25, ease: "easeOut" }}
-      className="min-h-screen bg-cream flex flex-col items-center justify-center px-6"
-      style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 48px)" }}
-    >
-      <div className="w-full max-w-sm flex flex-col items-center gap-10">
-        {/* wordmark */}
-        <div className="flex flex-col items-center gap-3">
-          <h1 className="font-display text-[52px] font-[300] tracking-[-1px] text-ink leading-none">us.</h1>
-          <p className="text-[14px] text-ink3 text-center leading-relaxed max-w-[220px]">
-            A shared space for the people who matter most.
-          </p>
-        </div>
-
-        {/* sign-in */}
-        <div className="w-full flex flex-col gap-3">
-          {error && (
-            <p className="text-[13px] text-red text-center">{error}</p>
-          )}
-          <button
-            onClick={handleSignIn}
-            disabled={signingIn}
-            className="w-full flex items-center justify-center gap-2.5 bg-card text-ink border-[0.5px] border-[rgba(44,40,32,0.12)] rounded-[14px] px-4 py-[14px] text-[14px] font-[500] transition-opacity active:opacity-70 disabled:opacity-40"
-          >
-            {!signingIn ? (
-              <>
-                <GoogleIcon />
-                Continue with Google
-              </>
-            ) : (
-              <span className="w-5 h-5 rounded-full border-2 border-ink border-t-transparent animate-spin" />
-            )}
-          </button>
-          <p className="text-[11px] text-ink3 text-center leading-relaxed">
-            By continuing you agree to our Terms &amp; Privacy Policy.
-          </p>
-        </div>
+    <div className="min-h-screen bg-cream flex flex-col">
+      <div className="flex-1 flex flex-col items-center justify-center px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+          className="flex flex-col items-center gap-6 text-center"
+        >
+          <div className="w-[72px] h-[72px] rounded-[24px] bg-ink flex items-center justify-center">
+            <span className="font-display text-[30px] font-[300] text-cream leading-none tracking-[-1px]">u.</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <h1 className="font-display text-[52px] font-[300] tracking-[-2px] text-ink leading-none">us.</h1>
+            <p className="text-[15px] text-ink3 leading-relaxed">
+              A shared space for the people<br />who matter most.
+            </p>
+          </div>
+        </motion.div>
       </div>
-    </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+        className="px-6 flex flex-col gap-3"
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 52px)" }}
+      >
+        {error && <p className="text-[13px] text-red text-center">{error}</p>}
+        <button
+          onClick={handleSignIn}
+          disabled={signingIn}
+          className="w-full flex items-center justify-center gap-3 bg-card text-ink border-[0.5px] border-[rgba(44,40,32,0.10)] rounded-[18px] px-5 py-[17px] text-[15px] font-[500] transition-opacity active:opacity-60 disabled:opacity-40"
+          style={{ boxShadow: "0 1px 4px rgba(44,40,32,0.06)" }}
+        >
+          {!signingIn ? (
+            <>
+              <GoogleIcon />
+              Continue with Google
+            </>
+          ) : (
+            <span className="w-5 h-5 rounded-full border-2 border-ink border-t-transparent animate-spin" />
+          )}
+        </button>
+        <p className="text-[11px] text-ink3 text-center leading-relaxed">
+          By continuing you agree to our Terms &amp; Privacy Policy.
+        </p>
+      </motion.div>
+    </div>
   );
 }
 

@@ -9,7 +9,6 @@ export default function AuthCallbackPage() {
   const router = useRouter();
   const { user, loading, profileComplete } = useAuthContext();
   const [failed, setFailed] = useState(false);
-  const [status, setStatus] = useState("Starting…");
   const started = useRef(false);
 
   useEffect(() => {
@@ -17,41 +16,30 @@ export default function AuthCallbackPage() {
     started.current = true;
 
     const hash = window.location.hash;
-    const search = window.location.search;
-    setStatus(`hash=${hash.slice(0, 60)} search=${search}`);
+
+    // Supabase error response (e.g. failed token exchange with Google)
+    if (hash.includes("error=")) {
+      setFailed(true);
+      return;
+    }
 
     const params = new URLSearchParams(hash.slice(1));
     const access_token = params.get("access_token");
     const refresh_token = params.get("refresh_token");
 
     if (!access_token || !refresh_token) {
-      setStatus(`No tokens. hash="${hash}" search="${search}"`);
-      setTimeout(() => setFailed(true), 4000);
+      setFailed(true);
       return;
     }
 
-    setStatus("Tokens found, calling setSession…");
     supabase.auth
       .setSession({ access_token, refresh_token })
-      .then(({ error }) => {
-        if (error) {
-          setStatus(`setSession error: ${error.message}`);
-          setTimeout(() => setFailed(true), 4000);
-        } else {
-          setStatus("setSession OK, waiting for AuthContext…");
-        }
-      })
-      .catch((e) => {
-        setStatus(`setSession threw: ${String(e)}`);
-        setTimeout(() => setFailed(true), 4000);
-      });
+      .then(({ error }) => { if (error) setFailed(true); })
+      .catch(() => setFailed(true));
   }, []);
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      setStatus((s) => `Timeout after 12s. Last: ${s}`);
-      setFailed(true);
-    }, 12_000);
+    const t = setTimeout(() => setFailed(true), 12_000);
     return () => clearTimeout(t);
   }, []);
 
@@ -62,9 +50,8 @@ export default function AuthCallbackPage() {
   }, [failed, loading, user, profileComplete, router]);
 
   return (
-    <div className="min-h-screen bg-cream flex flex-col items-center justify-center gap-4 px-6">
+    <div className="min-h-screen bg-cream flex items-center justify-center">
       <div className="w-6 h-6 rounded-full border-2 border-accent border-t-transparent animate-spin" />
-      <p className="text-[11px] text-ink3 text-center max-w-xs break-all">{status}</p>
     </div>
   );
 }

@@ -48,7 +48,7 @@ export function OnboardingScreen() {
         <div className="flex flex-col items-center gap-3">
           <h1 className="font-display text-[52px] font-[300] tracking-[-1px] text-ink leading-none">us.</h1>
           <p className="text-[14px] text-ink3 text-center leading-relaxed max-w-[220px]">
-            A shared space for the people who matter most
+            A shared space for the people who matter most.
           </p>
         </div>
 

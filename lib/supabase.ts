@@ -33,10 +33,16 @@ export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
   },
 });
 
-// Returns the current access token. In v2.106+, the PostgREST client fetches
-// the token dynamically on each request, so this is only needed for explicit
-// auth checks (e.g. verifying a session exists before a DB write).
-export async function ensureAuth(): Promise<string | null> {
-  const { data: { session } } = await getClient().auth.getSession();
-  return session?.access_token ?? null;
+// Returns a Supabase client with the Authorization header explicitly set to
+// the given access token. Use this for one-off writes where you need to
+// guarantee the token reaches PostgREST regardless of session lock state.
+export function createAuthedClient(accessToken: string): SupabaseClient {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      global: { headers: { Authorization: `Bearer ${accessToken}` } },
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    }
+  );
 }

@@ -4,8 +4,8 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import { upsertUser, addGroupMember, createGroup, getGroupByInviteCode } from "@/lib/db";
-import { supabase } from "@/lib/supabase";
+// db functions not used here — handleFinish writes inline via createAuthedClient
+import { supabase, createAuthedClient } from "@/lib/supabase";
 
 const SWATCHES = [
   { colour: "#C4A882", name: "Sand" },
@@ -65,57 +65,76 @@ export function SetupScreen() {
     setSubmitting(true);
     setError("");
     try {
-      // Verify session is in localStorage before any PostgREST write.
-      // _getAccessToken() calls auth.getSession() per-request; if that returns
-      // null the anon key is sent and auth.uid() is null server-side.
+      // Get session — used to create an explicitly-authed client so the Bearer
+      // token is guaranteed in every PostgREST request header.
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) throw new Error("Session expired — please sign in again.");
 
-      // Get authoritative user ID from the live session
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (!authUser) throw new Error("Session expired — please sign in again.");
-      const uid = authUser.id;
+      // All DB writes use a client with Authorization: Bearer <token> hardcoded
+      // in global headers, bypassing _getAccessToken() session-lock complexity.
+      const db = createAuthedClient(session.access_token);
+      const uid = session.user.id;
 
-      // Upsert user row first so the groups FK is satisfied
-      await upsertUser(uid, {
-        display_name: displayName.trim() || user.user_metadata?.full_name || "",
-        photo_url: photoUrl || null,
-        accent_colour: accent,
-      });
-
-      if (groupMode === "create") {
-        const name = groupType === "couple"
-          ? "Us"
-          : groupName.trim();
-        if (groupType === "group" && !name) {
-          setError("Enter a group name to continue.");
-          setSubmitting(false);
-          return;
-        }
-        const code = generateInviteCode();
-        const group = await createGroup({
-          name,
-          type: groupType,
-          invite_code: code,
-          created_by: uid,
-        });
-        await addGroupMember(group.id, uid, "owner");
-        await upsertUser(uid, { active_group_id: group.id });
-      } else {
+      // Validate group name early before any DB write
+      if (groupMode === "create" && groupType === "group" && !groupName.trim()) {
+        setError("Enter a group name to continue.");
+        setSubmitting(false);
+        return;
+      }
+      if (groupMode === "join") {
         const code = inviteCode.trim().toUpperCase();
         if (code.length !== 6) {
           setError("Enter a valid 6-character invite code.");
           setSubmitting(false);
           return;
         }
-        const group = await getGroupByInviteCode(code);
+      }
+
+      // Upsert user row first (FK dependency for groups)
+      const { error: userErr } = await db.from("users").upsert(
+        {
+          id: uid,
+          display_name: displayName.trim() || user.user_metadata?.full_name || "",
+          photo_url: photoUrl || null,
+          accent_colour: accent,
+        },
+        { onConflict: "id" }
+      );
+      if (userErr) throw userErr;
+
+      if (groupMode === "create") {
+        const name = groupType === "couple" ? "Us" : groupName.trim();
+        const code = generateInviteCode();
+
+        const { data: group, error: groupErr } = await db
+          .from("groups")
+          .insert({ name, type: groupType, invite_code: code, created_by: uid })
+          .select()
+          .single();
+        if (groupErr) throw groupErr;
+
+        await db.from("group_members").upsert(
+          { group_id: group.id, user_id: uid, role: "owner" },
+          { onConflict: "group_id,user_id" }
+        );
+        await db.from("users").upsert({ id: uid, active_group_id: group.id }, { onConflict: "id" });
+      } else {
+        const code = inviteCode.trim().toUpperCase();
+        const { data: group } = await db
+          .from("groups")
+          .select("*")
+          .eq("invite_code", code)
+          .single();
         if (!group) {
           setError("Group not found. Double-check the code.");
           setSubmitting(false);
           return;
         }
-        await addGroupMember(group.id, uid, "member");
-        await upsertUser(uid, { active_group_id: group.id });
+        await db.from("group_members").upsert(
+          { group_id: group.id, user_id: uid, role: "member" },
+          { onConflict: "group_id,user_id" }
+        );
+        await db.from("users").upsert({ id: uid, active_group_id: group.id }, { onConflict: "id" });
       }
 
       await refreshProfile();

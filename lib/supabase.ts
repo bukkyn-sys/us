@@ -1,8 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-// Lazy init — same SSR-safe Proxy pattern used before.
-// createClient is only called when a property is first accessed,
-// which only happens inside useEffect / event handlers (client-side).
 let _client: SupabaseClient | null = null;
 
 function getClient(): SupabaseClient {
@@ -14,7 +11,7 @@ function getClient(): SupabaseClient {
         auth: {
           autoRefreshToken: true,
           persistSession: true,
-          detectSessionInUrl: true,
+          detectSessionInUrl: false,
           flowType: "implicit",
         },
       }

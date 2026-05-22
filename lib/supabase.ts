@@ -22,6 +22,12 @@ function getClient(): SupabaseClient {
 
 export const supabase = new Proxy({} as SupabaseClient, {
   get(_target, prop) {
-    return getClient()[prop as keyof SupabaseClient];
+    const client = getClient();
+    const value = client[prop as keyof SupabaseClient];
+    // Bind methods so `this` inside them is the real client, not the Proxy.
+    // Without this, auth headers are missing from PostgREST requests.
+    return typeof value === "function"
+      ? (value as (...args: unknown[]) => unknown).bind(client)
+      : value;
   },
 });

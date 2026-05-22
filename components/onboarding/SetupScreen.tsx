@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { upsertUser, addGroupMember, createGroup, getGroupByInviteCode } from "@/lib/db";
+import { supabase } from "@/lib/supabase";
 
 const SWATCHES = [
   { colour: "#C4A882", name: "Sand" },
@@ -64,8 +65,14 @@ export function SetupScreen() {
     setSubmitting(true);
     setError("");
     try {
+      // Get authoritative user ID from the live session — ensures auth.uid()
+      // in RLS policies matches the ID we use in all inserts.
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) throw new Error("Session expired — please sign in again.");
+      const uid = authUser.id;
+
       // Upsert user row first so the groups FK is satisfied
-      await upsertUser(user.id, {
+      await upsertUser(uid, {
         display_name: displayName.trim() || user.user_metadata?.full_name || "",
         photo_url: photoUrl || null,
         accent_colour: accent,
@@ -85,10 +92,10 @@ export function SetupScreen() {
           name,
           type: groupType,
           invite_code: code,
-          created_by: user.id,
+          created_by: uid,
         });
-        await addGroupMember(group.id, user.id, "owner");
-        await upsertUser(user.id, { active_group_id: group.id });
+        await addGroupMember(group.id, uid, "owner");
+        await upsertUser(uid, { active_group_id: group.id });
       } else {
         const code = inviteCode.trim().toUpperCase();
         if (code.length !== 6) {
@@ -102,8 +109,8 @@ export function SetupScreen() {
           setSubmitting(false);
           return;
         }
-        await addGroupMember(group.id, user.id, "member");
-        await upsertUser(user.id, { active_group_id: group.id });
+        await addGroupMember(group.id, uid, "member");
+        await upsertUser(uid, { active_group_id: group.id });
       }
 
       await refreshProfile();

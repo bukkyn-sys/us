@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { upsertUser, addGroupMember, createGroup, getGroupByInviteCode } from "@/lib/db";
-import { supabase, ensureAuth } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 const SWATCHES = [
   { colour: "#C4A882", name: "Sand" },
@@ -65,11 +65,13 @@ export function SetupScreen() {
     setSubmitting(true);
     setError("");
     try {
-      // Inject Bearer token into PostgREST headers before any DB operation
-      await ensureAuth();
+      // Verify session is in localStorage before any PostgREST write.
+      // _getAccessToken() calls auth.getSession() per-request; if that returns
+      // null the anon key is sent and auth.uid() is null server-side.
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error("Session expired — please sign in again.");
 
-      // Get authoritative user ID from the live session — ensures auth.uid()
-      // in RLS policies matches the ID we use in all inserts.
+      // Get authoritative user ID from the live session
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) throw new Error("Session expired — please sign in again.");
       const uid = authUser.id;

@@ -33,15 +33,10 @@ export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
   },
 });
 
-// Call this before any PostgREST operation to ensure the access token
-// is injected into the REST client's headers.
+// Returns the current access token. In v2.106+, the PostgREST client fetches
+// the token dynamically on each request, so this is only needed for explicit
+// auth checks (e.g. verifying a session exists before a DB write).
 export async function ensureAuth(): Promise<string | null> {
   const { data: { session } } = await getClient().auth.getSession();
-  const token = session?.access_token ?? null;
-  if (token) {
-    // Access the internal rest client and update its auth header directly.
-    const rest = (getClient() as unknown as { rest?: { setAuth: (t: string) => void } }).rest;
-    rest?.setAuth(token);
-  }
-  return token;
+  return session?.access_token ?? null;
 }

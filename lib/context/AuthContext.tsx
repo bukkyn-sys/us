@@ -60,9 +60,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthChange(async (_event, sess) => {
-      // Always mark loading at the START of handling any auth event.
-      // This keeps loading=true during the async profile fetch, so nothing
-      // acts on a stale loading=false,user=null snapshot mid-auth.
       setLoading(true);
 
       setSession(sess);
@@ -70,7 +67,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(u);
 
       if (u) {
-        await loadProfile(u);
+        await Promise.race([
+          loadProfile(u),
+          new Promise<void>((resolve) => setTimeout(resolve, 8_000)),
+        ]);
       } else {
         setProfile(null);
       }

@@ -72,14 +72,17 @@ export function SetupScreen() {
       });
 
       if (groupMode === "create") {
-        if (!groupName.trim()) {
+        const name = groupType === "couple"
+          ? "Us"
+          : groupName.trim();
+        if (groupType === "group" && !name) {
           setError("Enter a group name to continue.");
           setSubmitting(false);
           return;
         }
         const code = generateInviteCode();
         const group = await createGroup({
-          name: groupName.trim(),
+          name,
           type: groupType,
           invite_code: code,
           created_by: user.id,
@@ -304,27 +307,13 @@ export function SetupScreen() {
                   <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-1.5">
                       <label className="text-[10px] font-[600] uppercase tracking-[0.12em] text-ink3">
-                        Group name
-                      </label>
-                      <input
-                        type="text"
-                        value={groupName}
-                        onChange={(e) => setGroupName(e.target.value)}
-                        placeholder="e.g. Us, The Fam, Our House"
-                        maxLength={40}
-                        className="w-full bg-white border-[0.5px] border-[rgba(44,40,32,0.12)] rounded-[14px] px-4 py-3 text-[15px] text-ink placeholder:text-ink3 outline-none focus:border-[rgba(44,40,32,0.3)]"
-                        style={{ boxShadow: "0 1px 3px rgba(44,40,32,0.04)" }}
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-[10px] font-[600] uppercase tracking-[0.12em] text-ink3">
                         Group type
                       </label>
                       <div className="flex gap-2">
                         {(["couple", "group"] as const).map((t) => (
                           <button
                             key={t}
-                            onClick={() => setGroupType(t)}
+                            onClick={() => { setGroupType(t); setError(""); }}
                             className="flex-1 py-2.5 rounded-[14px] text-[14px] font-[500] border-[0.5px] transition-all"
                             style={{
                               backgroundColor: groupType === t ? "#2C2820" : "white",
@@ -338,6 +327,23 @@ export function SetupScreen() {
                         ))}
                       </div>
                     </div>
+
+                    {groupType === "group" && (
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-[600] uppercase tracking-[0.12em] text-ink3">
+                          Group name
+                        </label>
+                        <input
+                          type="text"
+                          value={groupName}
+                          onChange={(e) => setGroupName(e.target.value)}
+                          placeholder="e.g. The Fam, Our House"
+                          maxLength={40}
+                          className="w-full bg-white border-[0.5px] border-[rgba(44,40,32,0.12)] rounded-[14px] px-4 py-3 text-[15px] text-ink placeholder:text-ink3 outline-none focus:border-[rgba(44,40,32,0.3)]"
+                          style={{ boxShadow: "0 1px 3px rgba(44,40,32,0.04)" }}
+                        />
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-col gap-1.5">

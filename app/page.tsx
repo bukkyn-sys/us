@@ -9,14 +9,17 @@ export default function RootPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (loading) return;
-    if (!user) {
-      router.replace("/onboarding");
-    } else if (!profileComplete) {
-      router.replace("/onboarding/setup");
-    } else {
-      router.replace("/home");
+    // Supabase may redirect OAuth tokens to the site root instead of /auth/callback
+    // (happens when the callback URL isn't in Supabase's allowed redirect list).
+    // Hard-redirect so the hash survives the navigation.
+    if (window.location.hash.includes("access_token")) {
+      window.location.replace("/auth/callback" + window.location.hash);
+      return;
     }
+    if (loading) return;
+    if (!user) router.replace("/onboarding");
+    else if (!profileComplete) router.replace("/onboarding/setup");
+    else router.replace("/home");
   }, [user, loading, profileComplete, router]);
 
   return (

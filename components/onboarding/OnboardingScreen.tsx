@@ -13,6 +13,12 @@ export function OnboardingScreen() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    // Supabase may redirect OAuth tokens to /onboarding instead of /auth/callback.
+    // Hard-redirect so the hash survives.
+    if (window.location.hash.includes("access_token")) {
+      window.location.replace("/auth/callback" + window.location.hash);
+      return;
+    }
     if (loading) return;
     if (user && profileComplete) router.replace("/home");
     else if (user && !profileComplete) router.replace("/onboarding/setup");
@@ -42,7 +48,7 @@ export function OnboardingScreen() {
         <div className="flex flex-col items-center gap-3">
           <h1 className="font-display text-[52px] font-[300] tracking-[-1px] text-ink leading-none">us.</h1>
           <p className="text-[14px] text-ink3 text-center leading-relaxed max-w-[220px]">
-            A shared space for the people who matter most.
+            A shared space for the people who matter most
           </p>
         </div>
 

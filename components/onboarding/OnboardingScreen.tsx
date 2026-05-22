@@ -73,7 +73,7 @@ export function OnboardingScreen() {
         <button
           onClick={handleSignIn}
           disabled={signingIn}
-          className="w-full flex items-center justify-center gap-3 bg-card text-ink border-[0.5px] border-[rgba(44,40,32,0.10)] rounded-[18px] px-5 py-[17px] text-[15px] font-[500] transition-opacity active:opacity-60 disabled:opacity-40"
+          className="w-full flex items-center justify-center gap-3 bg-card text-ink border-[0.5px] border-[rgba(44,40,32,0.10)] rounded-[18px] px-5 py-[17px] text-[15px] font-[500] transition-[opacity,transform] duration-150 ease-out active:scale-[0.97] active:opacity-75 disabled:opacity-40 disabled:active:scale-100"
           style={{ boxShadow: "0 1px 4px rgba(44,40,32,0.07)" }}
         >
           {!signingIn ? (

@@ -139,7 +139,8 @@ export async function getUser(id: string): Promise<UserRow | null> {
 }
 
 export async function upsertUser(id: string, data: Partial<Omit<UserRow, "id" | "created_at">>) {
-  await supabase.from("users").upsert({ id, ...data }, { onConflict: "id" });
+  const { error } = await supabase.from("users").upsert({ id, ...data }, { onConflict: "id" });
+  if (error) throw error;
 }
 
 export async function updateUser(id: string, data: Partial<Omit<UserRow, "id" | "created_at">>) {

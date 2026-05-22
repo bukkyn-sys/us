@@ -19,7 +19,7 @@ export function SegmentedControl<T extends string>({
           <button
             key={opt.value}
             onClick={() => onChange(opt.value)}
-            className={`flex-1 py-1.5 rounded-[8px] text-[12px] font-[500] transition-colors duration-100 ${
+            className={`flex-1 py-1.5 rounded-[8px] text-[12px] font-[500] transition-[opacity,transform,colors] duration-150 ease-out active:scale-[0.96] active:opacity-70 ${
               active
                 ? "bg-card text-ink border-[0.5px] border-[rgba(44,40,32,0.10)]"
                 : "text-ink3"

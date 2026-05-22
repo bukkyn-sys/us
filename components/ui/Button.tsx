@@ -15,7 +15,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const base =
-    "text-[14px] font-[500] rounded-[14px] px-4 py-[13px] transition-opacity active:opacity-70 disabled:opacity-40 disabled:cursor-not-allowed";
+    "text-[14px] font-[500] rounded-[14px] px-4 py-[13px] transition-[opacity,transform] duration-150 ease-out active:scale-[0.97] active:opacity-75 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100";
 
   const variants = {
     primary: "bg-ink text-cream",

@@ -101,7 +101,7 @@ export function BottomNav() {
             <Link
               key={tab.href}
               href={tab.href}
-              className="flex flex-col items-center gap-[3px] flex-1 py-1"
+              className="flex flex-col items-center gap-[3px] flex-1 py-1 transition-[opacity,transform] duration-150 ease-out active:scale-[0.92] active:opacity-60"
             >
               {tab.icon(active)}
               <span

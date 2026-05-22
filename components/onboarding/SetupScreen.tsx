@@ -108,8 +108,13 @@ export function SetupScreen() {
 
       await refreshProfile();
       router.replace("/home");
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message :
+        typeof err === "object" && err !== null && "message" in err
+          ? String((err as { message: unknown }).message)
+          : "Something went wrong. Please try again.";
+      setError(msg);
       setSubmitting(false);
     }
   }
@@ -190,7 +195,7 @@ export function SetupScreen() {
               <button
                 onClick={() => setStep("colour")}
                 disabled={!displayName.trim()}
-                className="w-full max-w-sm mx-auto bg-ink text-cream rounded-[18px] py-[16px] text-[15px] font-[500] transition-opacity disabled:opacity-25 active:opacity-70 flex-shrink-0"
+                className="w-full max-w-sm mx-auto bg-ink text-cream rounded-[18px] py-[16px] text-[15px] font-[500] transition-[opacity,transform] duration-150 ease-out active:scale-[0.97] active:opacity-75 disabled:opacity-25 disabled:active:scale-100 flex-shrink-0"
               >
                 Continue
               </button>
@@ -250,13 +255,13 @@ export function SetupScreen() {
               <div className="flex gap-3 max-w-sm mx-auto w-full flex-shrink-0">
                 <button
                   onClick={() => setStep("profile")}
-                  className="flex-1 bg-[rgba(44,40,32,0.06)] text-ink rounded-[18px] py-[16px] text-[15px] font-[500] transition-opacity active:opacity-70"
+                  className="flex-1 bg-[rgba(44,40,32,0.06)] text-ink rounded-[18px] py-[16px] text-[15px] font-[500] transition-opacity transition-[opacity,transform] duration-150 ease-out active:scale-[0.97] active:opacity-75"
                 >
                   Back
                 </button>
                 <button
                   onClick={() => setStep("group")}
-                  className="flex-[2] bg-ink text-cream rounded-[18px] py-[16px] text-[15px] font-[500] transition-opacity active:opacity-70"
+                  className="flex-[2] bg-ink text-cream rounded-[18px] py-[16px] text-[15px] font-[500] transition-opacity transition-[opacity,transform] duration-150 ease-out active:scale-[0.97] active:opacity-75"
                 >
                   Continue
                 </button>
@@ -381,14 +386,14 @@ export function SetupScreen() {
               <div className="flex gap-3 max-w-sm mx-auto w-full flex-shrink-0">
                 <button
                   onClick={() => setStep("colour")}
-                  className="flex-1 bg-[rgba(44,40,32,0.06)] text-ink rounded-[18px] py-[16px] text-[15px] font-[500] transition-opacity active:opacity-70"
+                  className="flex-1 bg-[rgba(44,40,32,0.06)] text-ink rounded-[18px] py-[16px] text-[15px] font-[500] transition-opacity transition-[opacity,transform] duration-150 ease-out active:scale-[0.97] active:opacity-75"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleFinish}
                   disabled={submitting}
-                  className="flex-[2] bg-ink text-cream rounded-[18px] py-[16px] text-[15px] font-[500] transition-opacity disabled:opacity-50 active:opacity-70 flex items-center justify-center"
+                  className="flex-[2] bg-ink text-cream rounded-[18px] py-[16px] text-[15px] font-[500] transition-[opacity,transform] duration-150 ease-out active:scale-[0.97] active:opacity-75 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center"
                 >
                   {submitting ? (
                     <span className="w-5 h-5 rounded-full border-2 border-cream border-t-transparent animate-spin" />

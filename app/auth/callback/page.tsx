@@ -9,53 +9,62 @@ export default function AuthCallbackPage() {
   const router = useRouter();
   const { user, loading, profileComplete } = useAuthContext();
   const [failed, setFailed] = useState(false);
+  const [status, setStatus] = useState("Starting…");
   const started = useRef(false);
 
-  // Step 1 — parse the hash tokens and hand them to the shared Supabase singleton.
-  // This fires SIGNED_IN on that same singleton, which AuthContext is already
-  // subscribed to, so AuthContext will update user+profile atomically.
   useEffect(() => {
     if (started.current) return;
     started.current = true;
 
-    const params = new URLSearchParams(window.location.hash.slice(1));
+    const hash = window.location.hash;
+    const search = window.location.search;
+    setStatus(`hash=${hash.slice(0, 60)} search=${search}`);
+
+    const params = new URLSearchParams(hash.slice(1));
     const access_token = params.get("access_token");
     const refresh_token = params.get("refresh_token");
 
     if (!access_token || !refresh_token) {
-      setFailed(true);
+      setStatus(`No tokens. hash="${hash}" search="${search}"`);
+      setTimeout(() => setFailed(true), 4000);
       return;
     }
 
+    setStatus("Tokens found, calling setSession…");
     supabase.auth
       .setSession({ access_token, refresh_token })
-      .then(({ error }) => { if (error) setFailed(true); })
-      .catch(() => setFailed(true));
+      .then(({ error }) => {
+        if (error) {
+          setStatus(`setSession error: ${error.message}`);
+          setTimeout(() => setFailed(true), 4000);
+        } else {
+          setStatus("setSession OK, waiting for AuthContext…");
+        }
+      })
+      .catch((e) => {
+        setStatus(`setSession threw: ${String(e)}`);
+        setTimeout(() => setFailed(true), 4000);
+      });
   }, []);
 
-  // Step 2 — hard timeout: if SIGNED_IN never fires within 12s, give up.
   useEffect(() => {
-    const t = setTimeout(() => setFailed(true), 12_000);
+    const t = setTimeout(() => {
+      setStatus((s) => `Timeout after 12s. Last: ${s}`);
+      setFailed(true);
+    }, 12_000);
     return () => clearTimeout(t);
   }, []);
 
-  // Step 3 — navigate only once AuthContext has fully settled.
-  // We intentionally ignore loading=false+user=null (that's just the transient
-  // INITIAL_SESSION state). We only act when:
-  //   a) failed=true  →  back to onboarding
-  //   b) !loading && user  →  SIGNED_IN was processed AND profile is loaded
   useEffect(() => {
-    if (failed) {
-      router.replace("/onboarding");
-      return;
-    }
-    if (loading || !user) return; // keep spinning
+    if (failed) { router.replace("/onboarding"); return; }
+    if (loading || !user) return;
     router.replace(profileComplete ? "/home" : "/onboarding/setup");
   }, [failed, loading, user, profileComplete, router]);
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center">
+    <div className="min-h-screen bg-cream flex flex-col items-center justify-center gap-4 px-6">
       <div className="w-6 h-6 rounded-full border-2 border-accent border-t-transparent animate-spin" />
+      <p className="text-[11px] text-ink3 text-center max-w-xs break-all">{status}</p>
     </div>
   );
 }

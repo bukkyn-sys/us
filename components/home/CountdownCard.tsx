@@ -53,16 +53,25 @@ export function CountdownCard({ groupId, userId }: CountdownCardProps) {
   const today = new Date().toISOString().slice(0, 10);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <p className="text-[10px] font-[500] uppercase tracking-[0.08em] text-ink3">Countdowns</p>
-        <button onClick={() => setAdding(true)} className="text-[12px] text-accent font-[500]">
-          + Add
-        </button>
+        <motion.button
+          onClick={() => setAdding((v) => !v)}
+          whileTap={{ scale: 0.92 }}
+          className="flex items-center gap-1 px-3 py-1.5 rounded-full text-[12px] font-[500] transition-colors"
+          style={{
+            backgroundColor: adding ? "rgba(44,40,32,0.08)" : "#2C2820",
+            color: adding ? "#2C2820" : "#F5F0E8",
+          }}
+        >
+          <span style={{ fontSize: 14, lineHeight: 1, marginRight: 1 }}>{adding ? "×" : "+"}</span>
+          {adding ? "Cancel" : "Add"}
+        </motion.button>
       </div>
 
       {countdowns.length === 0 && !adding && (
-        <p className="text-[13px] text-ink3 py-2">No countdowns yet.</p>
+        <p className="text-[13px] text-ink3 py-1">No countdowns yet.</p>
       )}
 
       <div className="flex flex-col gap-2">
@@ -75,16 +84,19 @@ export function CountdownCard({ groupId, userId }: CountdownCardProps) {
               <motion.div
                 key={c.id}
                 initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: isPast ? 0.45 : 1, y: 0 }}
-                exit={{ opacity: 0, height: 0 }}
+                animate={{ opacity: isPast ? 0.4 : 1, y: 0 }}
+                exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                 transition={{ duration: 0.18, ease: "easeOut" }}
-                className="flex items-center gap-3 bg-card rounded-[8px] px-3 py-2.5 border-[0.5px] border-[rgba(44,40,32,0.07)]"
+                className="flex items-center gap-3 rounded-[10px] px-3 py-2.5"
+                style={{ backgroundColor: "rgba(44,40,32,0.04)" }}
               >
-                <span className="text-[18px]">{c.emoji}</span>
+                <span className="text-[18px] leading-none">{c.emoji}</span>
                 <span className="flex-1 text-[13px] text-ink truncate">{c.title}</span>
                 <span
-                  className="text-[12px] font-[500] whitespace-nowrap"
-                  style={{ color: isToday ? "#6A9E7A" : isPast ? "#9E9488" : "#2C2820" }}
+                  className="text-[12px] font-[600] whitespace-nowrap tabular-nums"
+                  style={{
+                    color: isToday ? "#6A9E7A" : isPast ? "#9E9488" : "#2C2820",
+                  }}
                 >
                   {isToday ? "Today!" : isPast ? `${Math.abs(days)}d ago` : `${days}d`}
                 </span>
@@ -97,11 +109,12 @@ export function CountdownCard({ groupId, userId }: CountdownCardProps) {
       <AnimatePresence>
         {adding && (
           <motion.div
-            initial={{ opacity: 0, y: 4 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 4 }}
+            exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
-            className="bg-card rounded-[14px] border-[0.5px] border-[rgba(44,40,32,0.07)] p-4 flex flex-col gap-3"
+            className="rounded-[12px] p-4 flex flex-col gap-3"
+            style={{ backgroundColor: "rgba(44,40,32,0.04)", border: "0.5px solid rgba(44,40,32,0.08)" }}
           >
             <p className="text-[13px] font-[500] text-ink">New countdown</p>
             <div className="flex gap-2">
@@ -109,7 +122,7 @@ export function CountdownCard({ groupId, userId }: CountdownCardProps) {
                 type="text"
                 value={emoji}
                 onChange={(e) => setEmoji(e.target.value)}
-                className="w-12 text-center bg-cream2 rounded-[8px] text-[20px] border-[0.5px] border-[rgba(44,40,32,0.12)]"
+                className="w-12 text-center bg-card rounded-[8px] text-[20px] border-[0.5px] border-[rgba(44,40,32,0.12)] outline-none"
                 maxLength={2}
               />
               <input
@@ -117,7 +130,7 @@ export function CountdownCard({ groupId, userId }: CountdownCardProps) {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Event name"
-                className="flex-1 bg-cream2 rounded-[8px] px-3 py-2 text-[13px] text-ink placeholder:text-ink3 border-[0.5px] border-[rgba(44,40,32,0.12)]"
+                className="flex-1 bg-card rounded-[8px] px-3 py-2 text-[13px] text-ink placeholder:text-ink3 border-[0.5px] border-[rgba(44,40,32,0.12)] outline-none focus:border-accent transition-colors"
                 maxLength={60}
               />
             </div>
@@ -126,11 +139,13 @@ export function CountdownCard({ groupId, userId }: CountdownCardProps) {
               value={date}
               min={today}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full bg-cream2 rounded-[8px] px-3 py-2 text-[13px] text-ink border-[0.5px] border-[rgba(44,40,32,0.12)]"
+              className="w-full bg-card rounded-[8px] px-3 py-2 text-[13px] text-ink border-[0.5px] border-[rgba(44,40,32,0.12)] outline-none focus:border-accent transition-colors"
             />
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setAdding(false)}>Cancel</Button>
-              <Button onClick={handleAdd} disabled={!title.trim() || !date || saving}>
+              <Button variant="outline" onClick={() => setAdding(false)} fullWidth={false} className="flex-1">
+                Cancel
+              </Button>
+              <Button onClick={handleAdd} disabled={!title.trim() || !date || saving} fullWidth={false} className="flex-1">
                 {saving ? "Adding…" : "Add"}
               </Button>
             </div>

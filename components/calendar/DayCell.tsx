@@ -14,11 +14,11 @@ interface DayCellProps {
   onClick?: () => void;
 }
 
-const colourMap = {
-  green: { bg: "#E4F0E7", text: "#2C2820" },
-  red: { bg: "#FAE8E7", text: "#2C2820" },
-  amber: { bg: "#FAF0DC", text: "#2C2820" },
-  none: { bg: "transparent", text: "#2C2820" },
+const BG_MAP = {
+  green: "#DCF0E1",
+  red:   "#F5DEDE",
+  amber: "#F5EDDA",
+  none:  "transparent",
 };
 
 export function DayCell({
@@ -30,43 +30,56 @@ export function DayCell({
   isCurrentMonth,
   onClick,
 }: DayCellProps) {
-  const { bg, text } = colourMap[colour];
-  const dimmed = !isCurrentMonth;
+  const bg = BG_MAP[colour];
+  const tappable = isCurrentMonth && !isPast;
 
   return (
     <motion.button
-      onClick={!isPast ? onClick : undefined}
-      animate={{ backgroundColor: bg }}
-      transition={{ duration: 0.12 }}
-      className="relative flex flex-col items-center justify-center aspect-square rounded-[8px]"
+      onClick={tappable ? onClick : undefined}
+      whileTap={tappable ? { scale: 0.86 } : undefined}
+      transition={{ duration: 0.1 }}
+      className="relative flex flex-col items-center justify-center aspect-square select-none"
       style={{
-        cursor: isPast ? "default" : "pointer",
-        opacity: dimmed ? 0.3 : isPast && isCurrentMonth ? 0.5 : 1,
+        cursor: tappable ? "pointer" : "default",
+        opacity: !isCurrentMonth ? 0.18 : isPast ? 0.38 : 1,
       }}
     >
+      {/* Background tile */}
+      <motion.span
+        className="absolute inset-[2px] rounded-[9px]"
+        animate={{ backgroundColor: bg }}
+        transition={{ duration: 0.14 }}
+      />
+
+      {/* Today ring */}
+      {isToday && (
+        <span
+          className="absolute inset-[2px] rounded-[9px]"
+          style={{ border: "1.5px solid #C4A882" }}
+        />
+      )}
+
+      {/* Day number */}
       <span
-        className="text-[13px] font-[400]"
+        className="relative z-10 leading-none"
         style={{
-          color: isToday ? "#C4A882" : text,
-          fontWeight: isToday ? "500" : "400",
+          fontSize: 13,
+          fontWeight: isToday ? 600 : 400,
+          color: isToday ? "#C4A882" : "#2C2820",
         }}
       >
         {day}
       </span>
 
-      {/* My free dot */}
-      {myStatus === "free" && (
+      {/* My status dot */}
+      {isCurrentMonth && myStatus !== "unselected" && (
         <span
-          className="absolute bottom-[3px] w-1 h-1 rounded-full"
-          style={{ backgroundColor: "#6A9E7A" }}
-        />
-      )}
-
-      {/* Today ring */}
-      {isToday && (
-        <span
-          className="absolute inset-0 rounded-[8px] border-[0.5px]"
-          style={{ borderColor: "#C4A882" }}
+          className="relative z-10 rounded-full mt-[3px]"
+          style={{
+            width: 4,
+            height: 4,
+            backgroundColor: myStatus === "free" ? "#6A9E7A" : "#D4645A",
+          }}
         />
       )}
     </motion.button>

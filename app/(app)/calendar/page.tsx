@@ -27,15 +27,9 @@ export default function CalendarPage() {
     profile: memberProfiles[m.user_id],
   }));
 
-  const [selectedMembers, setSelectedMembers] = useState<string[]>(() =>
-    members.map((m) => m.user_id)
-  );
-
-  // Keep selectedMembers in sync when members load
   const allMemberIds = members.map((m) => m.user_id);
-  const syncedSelected = selectedMembers.length === 0 && allMemberIds.length > 0
-    ? allMemberIds
-    : selectedMembers;
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const syncedSelected = selectedMembers.length === 0 ? allMemberIds : selectedMembers;
 
   function toggleMember(uid: string) {
     setSelectedMembers((prev) =>
@@ -48,7 +42,6 @@ export default function CalendarPage() {
     const existing = availability.find(
       (a) => a.date === dateStr && a.user_id === user.id
     );
-
     if (!existing) {
       await setAvailability(groupId, user.id, dateStr, "free");
     } else if (existing.status === "free") {
@@ -88,35 +81,44 @@ export default function CalendarPage() {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
-      className="flex flex-col h-[calc(100vh-56px)] max-w-lg mx-auto"
+      className="flex flex-col max-w-lg mx-auto"
+      style={{ height: "calc(100vh - 56px)" }}
     >
       {/* Header */}
-      <div className="px-4 pt-12 pb-3 flex flex-col gap-3 flex-shrink-0">
-        {/* Month nav */}
-        <div className="flex items-center justify-between">
-          <button
+      <div className="flex-shrink-0 px-4 pt-12 pb-3 flex flex-col gap-4">
+        {/* Month navigation */}
+        <div className="flex items-center gap-3">
+          <motion.button
             onClick={prevMonth}
             disabled={!canGoPrev}
-            className="w-8 h-8 flex items-center justify-center rounded-[8px] disabled:opacity-30"
+            whileTap={{ scale: 0.88 }}
+            className="w-9 h-9 flex items-center justify-center rounded-full transition-colors disabled:opacity-25"
+            style={{ backgroundColor: "rgba(44,40,32,0.06)" }}
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M10 12L6 8L10 4" stroke="#2C2820" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M9 11L5 7L9 3" stroke="#2C2820" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </button>
-          <h1 className="text-[15px] font-[500] text-ink">{monthLabel}</h1>
-          <button
+          </motion.button>
+
+          <h1 className="font-display text-[22px] font-[300] tracking-[-0.4px] text-ink text-center flex-1">
+            {monthLabel}
+          </h1>
+
+          <motion.button
             onClick={nextMonth}
             disabled={!canGoNext}
-            className="w-8 h-8 flex items-center justify-center rounded-[8px] disabled:opacity-30"
+            whileTap={{ scale: 0.88 }}
+            className="w-9 h-9 flex items-center justify-center rounded-full transition-colors disabled:opacity-25"
+            style={{ backgroundColor: "rgba(44,40,32,0.06)" }}
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M6 4L10 8L6 12" stroke="#2C2820" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M5 3L9 7L5 11" stroke="#2C2820" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </button>
+          </motion.button>
         </div>
 
-        {/* Member chips — only for group type */}
-        {!isCouple && memberList.length > 0 && (
+        {/* Member chips — group type only */}
+        {!isCouple && memberList.length > 1 && (
           <MemberChipRow
             members={memberList}
             selected={syncedSelected}
@@ -125,26 +127,29 @@ export default function CalendarPage() {
         )}
 
         {/* Legend */}
-        <div className="flex gap-3">
+        <div className="flex items-center gap-4">
           {[
-            { colour: "#E4F0E7", label: "Free" },
-            { colour: "#FAF0DC", label: "Partial" },
-            { colour: "#FAE8E7", label: "Busy" },
+            { colour: "#DCF0E1", label: "Free" },
+            { colour: "#F5EDDA", label: "Mixed" },
+            { colour: "#F5DEDE", label: "Busy" },
           ].map(({ colour, label }) => (
             <div key={label} className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-[3px]" style={{ backgroundColor: colour, border: "0.5px solid rgba(44,40,32,0.10)" }} />
+              <span
+                className="rounded-[4px]"
+                style={{ width: 12, height: 12, backgroundColor: colour, border: "0.5px solid rgba(44,40,32,0.10)" }}
+              />
               <span className="text-[11px] text-ink3">{label}</span>
             </div>
           ))}
-          <div className="flex items-center gap-1.5">
-            <span className="w-1 h-1 rounded-full bg-green" />
-            <span className="text-[11px] text-ink3">You&apos;re free</span>
+          <div className="flex items-center gap-1.5 ml-auto">
+            <span className="w-[5px] h-[5px] rounded-full" style={{ backgroundColor: "#6A9E7A" }} />
+            <span className="text-[11px] text-ink3">Your day</span>
           </div>
         </div>
       </div>
 
-      {/* Calendar grid — fills remaining space */}
-      <div className="flex-1 px-4 pb-4 overflow-hidden">
+      {/* Calendar grid */}
+      <div className="flex-1 px-4 pb-4 min-h-0">
         <CalendarGrid
           year={year}
           month={month}

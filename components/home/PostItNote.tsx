@@ -55,15 +55,14 @@ export function PostItNote({ groupId, userId, memberNames }: PostItNoteProps) {
 
   return (
     <div
-      className="rounded-[14px] px-4 py-3 relative"
+      className="rounded-[14px] px-4 py-3.5 relative"
       style={{
-        backgroundColor: "#FFF8DC",
-        border: "0.5px solid rgba(196,168,130,0.4)",
-        borderLeftWidth: 3,
-        borderLeftColor: "#C4A882",
-        borderLeftStyle: "solid",
+        backgroundColor: "#FFFCF0",
+        border: "0.5px solid rgba(196,168,130,0.3)",
+        borderLeft: "3px solid #C4A882",
       }}
     >
+      <p className="text-[10px] font-[500] uppercase tracking-[0.08em] text-ink3 mb-2.5">Group note</p>
       <textarea
         ref={textareaRef}
         value={text}
@@ -72,9 +71,8 @@ export function PostItNote({ groupId, userId, memberNames }: PostItNoteProps) {
         placeholder="Leave a note for the group…"
         maxLength={280}
         rows={3}
-        className="w-full bg-transparent text-[15px] text-ink leading-relaxed"
+        className="w-full bg-transparent text-[14px] text-ink leading-relaxed placeholder:text-ink3"
         style={{
-          fontFamily: "'Caveat', cursive",
           border: "none",
           outline: "none",
           resize: "none",
@@ -88,7 +86,7 @@ export function PostItNote({ groupId, userId, memberNames }: PostItNoteProps) {
         <span className="text-[11px] text-ink3">{text.length}/280</span>
         {updaterName && timeAgo && (
           <span className="text-[11px] text-ink3">
-            {saving ? "Saving…" : `Updated by ${updaterName} · ${timeAgo}`}
+            {saving ? "Saving…" : `${updaterName} · ${timeAgo}`}
           </span>
         )}
       </div>

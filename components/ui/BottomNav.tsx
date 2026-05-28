@@ -69,21 +69,6 @@ const tabs = [
       </svg>
     ),
   },
-  {
-    href: "/settings",
-    label: "Settings",
-    icon: (active: boolean) => (
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <circle cx="11" cy="11" r="2.5" stroke={active ? "#2C2820" : "#9E9488"} strokeWidth="1.2" />
-        <path
-          d="M11 3V4.5M11 17.5V19M3 11H4.5M17.5 11H19M5.15 5.15L6.2 6.2M15.8 15.8L16.85 16.85M5.15 16.85L6.2 15.8M15.8 6.2L16.85 5.15"
-          stroke={active ? "#2C2820" : "#9E9488"}
-          strokeWidth="1.2"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-  },
 ];
 
 export function BottomNav() {
@@ -91,7 +76,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 bg-cream border-t-[0.5px] border-[rgba(44,40,32,0.12)] z-50"
+      className="fixed bottom-0 left-0 right-0 bg-cream/95 backdrop-blur-sm border-t-[0.5px] border-[rgba(44,40,32,0.10)] z-40"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
     >
       <div className="flex items-center justify-around h-[56px] max-w-lg mx-auto px-2">

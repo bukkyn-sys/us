@@ -21,9 +21,10 @@ interface MoodCheckinProps {
   groupId: string;
   userId: string;
   members: { user_id: string; profile?: UserRow | null }[];
+  inviteCode?: string;
 }
 
-export function MoodCheckin({ groupId, userId, members }: MoodCheckinProps) {
+export function MoodCheckin({ groupId, userId, members, inviteCode }: MoodCheckinProps) {
   const [checkins, setCheckins] = useState<MoodCheckinRow[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -53,32 +54,35 @@ export function MoodCheckin({ groupId, userId, members }: MoodCheckinProps) {
   const otherMembers = members.filter((m) => m.user_id !== userId);
 
   return (
-    <div className="flex flex-col gap-3">
-      <div>
-        <p className="text-[10px] font-[500] uppercase tracking-[0.08em] text-ink3 mb-2">
-          How are you feeling?
-        </p>
-        <div className="flex gap-2 justify-between">
-          {EMOJIS.map((emoji, i) => (
-            <motion.button
-              key={i}
-              onClick={() => handleTap(i)}
-              whileTap={{ scale: 1.3 }}
-              transition={{ duration: 0.14 }}
-              className={`flex-1 h-10 rounded-[8px] flex items-center justify-center text-[20px] transition-colors ${
-                myMood === i ? "bg-accent-light" : "bg-cream2 active:bg-cream3"
-              }`}
-            >
-              <span style={{ opacity: myMood !== null && myMood !== i ? 0.4 : 1 }}>
-                {emoji}
-              </span>
-            </motion.button>
-          ))}
-        </div>
+    <div className="flex flex-col gap-4">
+      {/* Label */}
+      <p className="text-[10px] font-[500] uppercase tracking-[0.08em] text-ink3">
+        How are you feeling?
+      </p>
+
+      {/* Emoji selector */}
+      <div className="flex gap-2">
+        {EMOJIS.map((emoji, i) => (
+          <motion.button
+            key={i}
+            onClick={() => handleTap(i)}
+            whileTap={{ scale: 1.25 }}
+            transition={{ duration: 0.12 }}
+            className="flex-1 flex items-center justify-center rounded-[10px] transition-colors"
+            style={{
+              height: 48,
+              backgroundColor: myMood === i ? "#EDE0CC" : "rgba(44,40,32,0.05)",
+              opacity: saving ? 0.6 : myMood !== null && myMood !== i ? 0.45 : 1,
+            }}
+          >
+            <span className="text-[22px] leading-none select-none">{emoji}</span>
+          </motion.button>
+        ))}
       </div>
 
-      {otherMembers.length > 0 && (
-        <div className="flex flex-col gap-2">
+      {/* Others' moods or invite prompt */}
+      {otherMembers.length > 0 ? (
+        <div className="flex flex-col gap-2.5 pt-0.5">
           {otherMembers.map((m) => {
             const checkin = checkins.find((c) => c.user_id === m.user_id);
             const mood = checkin?.emoji_index ?? null;
@@ -88,22 +92,33 @@ export function MoodCheckin({ groupId, userId, members }: MoodCheckinProps) {
                   src={m.profile?.photo_url}
                   name={m.profile?.display_name || "?"}
                   accentColour={m.profile?.accent_colour}
-                  size={28}
+                  size={30}
                 />
                 <span className="text-[13px] text-ink2 flex-1">
                   {m.profile?.display_name?.split(" ")[0] || "Them"}
                 </span>
                 <span
-                  className="text-[20px]"
-                  style={{ opacity: mood === null ? 0.3 : 1 }}
+                  className="text-[22px] leading-none"
+                  style={{ opacity: mood === null ? 0.25 : 1 }}
                 >
-                  {mood !== null ? EMOJIS[mood] : "?"}
+                  {mood !== null ? EMOJIS[mood] : "—"}
                 </span>
               </div>
             );
           })}
         </div>
-      )}
+      ) : inviteCode ? (
+        <div
+          className="rounded-[10px] px-4 py-3 flex items-center justify-between"
+          style={{ backgroundColor: "rgba(44,40,32,0.04)" }}
+        >
+          <div>
+            <p className="text-[12px] font-[500] text-ink">Invite someone</p>
+            <p className="text-[11px] text-ink3 mt-0.5">Share your group code</p>
+          </div>
+          <p className="text-[18px] font-[500] tracking-[0.25em] text-ink">{inviteCode}</p>
+        </div>
+      ) : null}
     </div>
   );
 }

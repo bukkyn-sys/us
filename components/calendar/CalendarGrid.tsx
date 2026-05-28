@@ -8,7 +8,7 @@ const DAY_LABELS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 interface CalendarGridProps {
   year: number;
-  month: number; // 0-indexed
+  month: number;
   availability: AvailabilityRow[];
   selectedMembers: string[];
   userId: string;
@@ -23,25 +23,23 @@ export function CalendarGrid({
   userId,
   onDayPress,
 }: CalendarGridProps) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
 
   const { cells } = useMemo(() => {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const startDow = firstDay.getDay();
     const daysInMonth = lastDay.getDate();
-
     const prevMonthDays = new Date(year, month, 0).getDate();
 
     const cells: { day: number; inMonth: boolean; date: Date }[] = [];
 
     for (let i = startDow - 1; i >= 0; i--) {
-      cells.push({
-        day: prevMonthDays - i,
-        inMonth: false,
-        date: new Date(year, month - 1, prevMonthDays - i),
-      });
+      cells.push({ day: prevMonthDays - i, inMonth: false, date: new Date(year, month - 1, prevMonthDays - i) });
     }
     for (let d = 1; d <= daysInMonth; d++) {
       cells.push({ day: d, inMonth: true, date: new Date(year, month, d) });
@@ -60,18 +58,13 @@ export function CalendarGrid({
 
   function getDayColour(dateStr: string): "green" | "red" | "amber" | "none" {
     if (selectedMembers.length === 0) return "none";
-
     const relevant = availability.filter(
       (a) => a.date === dateStr && selectedMembers.includes(a.user_id)
     );
-
-    const hasBusy = relevant.some((a) => a.status === "busy");
-    if (hasBusy) return "red";
-
+    if (relevant.some((a) => a.status === "busy")) return "red";
     const freeCount = relevant.filter((a) => a.status === "free").length;
-    if (freeCount === selectedMembers.length) return "green";
+    if (freeCount === selectedMembers.length && freeCount > 0) return "green";
     if (freeCount > 0) return "amber";
-
     return "none";
   }
 
@@ -81,13 +74,14 @@ export function CalendarGrid({
   }
 
   return (
-    <div className="flex flex-col flex-1 select-none">
+    <div className="flex flex-col h-full select-none">
       {/* Day labels */}
-      <div className="grid grid-cols-7 mb-1">
+      <div className="grid grid-cols-7 mb-2">
         {DAY_LABELS.map((d) => (
           <div
             key={d}
-            className="text-center text-[10px] font-[500] uppercase tracking-[0.08em] text-ink3 py-1"
+            className="text-center text-[10px] font-[600] uppercase tracking-[0.1em] py-1"
+            style={{ color: "#9E9488" }}
           >
             {d}
           </div>
@@ -95,7 +89,7 @@ export function CalendarGrid({
       </div>
 
       {/* Day cells */}
-      <div className="grid grid-cols-7 gap-[2px] flex-1">
+      <div className="grid grid-cols-7 gap-[3px] flex-1">
         {cells.map((cell, i) => {
           const dateStr = getDateStr(cell.date);
           const isPast = cell.date < today;
@@ -112,7 +106,7 @@ export function CalendarGrid({
               isToday={isToday}
               isPast={isPast}
               isCurrentMonth={cell.inMonth}
-              onClick={() => cell.inMonth && onDayPress(dateStr)}
+              onClick={() => cell.inMonth && !isPast && onDayPress(dateStr)}
             />
           );
         })}

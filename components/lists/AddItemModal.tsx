@@ -12,6 +12,8 @@ interface AddItemModalProps {
   onClose: () => void;
 }
 
+const WANT_LABELS = ["Nice to have", "Would love it", "Really want"];
+
 export function AddItemModal({ groupId, userId, folders, onClose }: AddItemModalProps) {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -65,8 +67,6 @@ export function AddItemModal({ groupId, userId, folders, onClose }: AddItemModal
     onClose();
   }
 
-  const WANT_LABELS = ["Nice to have", "Would love it", "Really want"];
-
   return (
     <AnimatePresence>
       <motion.div
@@ -92,59 +92,43 @@ export function AddItemModal({ groupId, userId, folders, onClose }: AddItemModal
         >
           {/* Handle */}
           <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-            <div className="w-10 h-1 rounded-full" style={{ backgroundColor: "rgba(44,40,32,0.15)" }} />
+            <div className="w-10 h-1 rounded-full" style={{ backgroundColor: "rgba(28,25,23,0.15)" }} />
           </div>
 
           {/* Scrollable content */}
           <div className="overflow-y-auto flex flex-col gap-5 px-5 pt-3 pb-2">
+            {/* Title row */}
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-[18px] font-[500] text-ink">Add to list</h3>
               <button
                 onClick={onClose}
                 className="w-8 h-8 rounded-full flex items-center justify-center transition-colors active:bg-cream2"
-                style={{ backgroundColor: "rgba(44,40,32,0.06)" }}
+                style={{ backgroundColor: "rgba(28,25,23,0.06)" }}
               >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M3 3L11 11M11 3L3 11" stroke="#9E9488" strokeWidth="1.3" strokeLinecap="round" />
+                  <path d="M3 3L11 11M11 3L3 11" stroke="#AAA49E" strokeWidth="1.3" strokeLinecap="round" />
                 </svg>
               </button>
             </div>
 
-            {/* URL */}
+            {/* Item title */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-[600] uppercase tracking-[0.1em] text-ink3">URL (optional)</label>
-              <div className="relative">
-                <input
-                  type="url"
-                  value={url}
-                  onChange={(e) => handleUrlChange(e.target.value)}
-                  placeholder="https://…"
-                  className="w-full bg-cream2 rounded-[10px] px-3 py-3 text-[14px] text-ink placeholder:text-ink3 border-[0.5px] border-[rgba(44,40,32,0.12)] pr-9 outline-none focus:border-accent transition-colors"
-                />
-                {fetchingOg && (
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-accent border-t-transparent animate-spin" />
-                )}
-              </div>
-            </div>
-
-            {/* Title */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-[600] uppercase tracking-[0.1em] text-ink3">Title *</label>
+              <label className="text-[12px] font-[500] text-ink2">What is it?</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="What is it?"
+                placeholder="Item name"
                 maxLength={120}
-                className="bg-cream2 rounded-[10px] px-3 py-3 text-[14px] text-ink placeholder:text-ink3 border-[0.5px] border-[rgba(44,40,32,0.12)] outline-none focus:border-accent transition-colors"
                 autoFocus
+                className="bg-cream2 rounded-[10px] px-3 py-3 text-[14px] text-ink placeholder:text-ink3 border border-[rgba(28,25,23,0.08)] outline-none focus:border-accent transition-colors"
               />
             </div>
 
             {/* Price + Want level */}
             <div className="flex gap-3">
               <div className="flex flex-col gap-1.5 w-28">
-                <label className="text-[10px] font-[600] uppercase tracking-[0.1em] text-ink3">Price (£)</label>
+                <label className="text-[12px] font-[500] text-ink2">Price</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-ink3">£</span>
                   <input
@@ -154,48 +138,52 @@ export function AddItemModal({ groupId, userId, folders, onClose }: AddItemModal
                     placeholder="0.00"
                     min="0"
                     step="0.01"
-                    className="w-full bg-cream2 rounded-[10px] pl-6 pr-3 py-3 text-[14px] text-ink border-[0.5px] border-[rgba(44,40,32,0.12)] outline-none focus:border-accent transition-colors"
+                    className="w-full bg-cream2 rounded-[10px] pl-6 pr-3 py-3 text-[14px] text-ink border border-[rgba(28,25,23,0.08)] outline-none focus:border-accent transition-colors"
                   />
                 </div>
               </div>
               <div className="flex flex-col gap-1.5 flex-1">
-                <label className="text-[10px] font-[600] uppercase tracking-[0.1em] text-ink3">How much do you want it?</label>
+                <label className="text-[12px] font-[500] text-ink2">How much do you want it?</label>
                 <div className="flex gap-2 h-[46px] items-center">
                   {([1, 2, 3] as const).map((l) => (
                     <button
                       key={l}
                       onClick={() => setWantLevel(l)}
-                      className="flex-1 flex items-center justify-center gap-1 rounded-[8px] h-full transition-colors"
+                      className="flex-1 flex items-center justify-center gap-1.5 rounded-[8px] h-full transition-all"
                       style={{
-                        backgroundColor: wantLevel === l ? "#EDE0CC" : "rgba(44,40,32,0.05)",
-                        border: wantLevel === l ? "0.5px solid #C4A882" : "0.5px solid transparent",
+                        backgroundColor: wantLevel === l ? "#FBF0E6" : "rgba(28,25,23,0.05)",
+                        border: wantLevel === l ? "1.5px solid rgba(192,107,50,0.30)" : "1.5px solid transparent",
                       }}
                     >
                       {[1, 2, 3].map((i) => (
                         <span
                           key={i}
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: i <= l ? (wantLevel === l ? "#C4A882" : "#C4A882") : "#E3DDD3" }}
+                          className="rounded-full"
+                          style={{
+                            width: i <= l ? 7 : 5,
+                            height: i <= l ? 7 : 5,
+                            backgroundColor: i <= l ? (wantLevel === l ? "#C06B32" : "#C4A882") : "rgba(28,25,23,0.15)",
+                          }}
                         />
                       ))}
                     </button>
                   ))}
                 </div>
-                <p className="text-[10px] text-ink3">{WANT_LABELS[wantLevel - 1]}</p>
+                <p className="text-[11px] text-ink3">{WANT_LABELS[wantLevel - 1]}</p>
               </div>
             </div>
 
             {/* Folder */}
             {folders.length > 0 && (
               <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-[600] uppercase tracking-[0.1em] text-ink3">Folder (optional)</label>
+                <label className="text-[12px] font-[500] text-ink2">Folder</label>
                 <div className="flex gap-2 flex-wrap">
                   <button
                     onClick={() => setFolderId(null)}
                     className="px-3 py-1.5 rounded-full text-[12px] font-[500] transition-colors"
                     style={{
-                      backgroundColor: !folderId ? "#2C2820" : "rgba(44,40,32,0.07)",
-                      color: !folderId ? "#F5F0E8" : "#6B6458",
+                      backgroundColor: !folderId ? "#1C1917" : "rgba(28,25,23,0.07)",
+                      color: !folderId ? "#F5F0EA" : "#6B6460",
                     }}
                   >
                     None
@@ -206,8 +194,8 @@ export function AddItemModal({ groupId, userId, folders, onClose }: AddItemModal
                       onClick={() => setFolderId(f.id)}
                       className="px-3 py-1.5 rounded-full text-[12px] font-[500] transition-colors"
                       style={{
-                        backgroundColor: folderId === f.id ? "#2C2820" : "rgba(44,40,32,0.07)",
-                        color: folderId === f.id ? "#F5F0E8" : "#6B6458",
+                        backgroundColor: folderId === f.id ? "#1C1917" : "rgba(28,25,23,0.07)",
+                        color: folderId === f.id ? "#F5F0EA" : "#6B6460",
                       }}
                     >
                       {f.emoji} {f.name}
@@ -216,6 +204,23 @@ export function AddItemModal({ groupId, userId, folders, onClose }: AddItemModal
                 </div>
               </div>
             )}
+
+            {/* URL — optional, last */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[12px] font-[500] text-ink2">Link <span className="text-ink3 font-[400]">(optional)</span></label>
+              <div className="relative">
+                <input
+                  type="url"
+                  value={url}
+                  onChange={(e) => handleUrlChange(e.target.value)}
+                  placeholder="https://…"
+                  className="w-full bg-cream2 rounded-[10px] px-3 py-3 text-[14px] text-ink placeholder:text-ink3 border border-[rgba(28,25,23,0.08)] pr-9 outline-none focus:border-accent transition-colors"
+                />
+                {fetchingOg && (
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-accent border-t-transparent animate-spin" />
+                )}
+              </div>
+            </div>
 
             <Button onClick={handleSave} disabled={!title.trim() || saving}>
               {saving ? "Adding…" : "Add to list"}

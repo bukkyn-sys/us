@@ -5,16 +5,17 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useGroup } from "@/lib/hooks/useGroup";
-import { Card } from "@/components/ui/Card";
 import { MoodCheckin } from "@/components/home/MoodCheckin";
 import { PostItNote } from "@/components/home/PostItNote";
 import { CountdownCard } from "@/components/home/CountdownCard";
 
 function getGreeting() {
   const h = new Date().getHours();
+  if (h < 5)  return "Still up?";
   if (h < 12) return "Good morning";
   if (h < 18) return "Good afternoon";
-  return "Good evening";
+  if (h < 22) return "Good evening";
+  return "Good night";
 }
 
 export default function HomePage() {
@@ -30,12 +31,8 @@ export default function HomePage() {
   if (!user || !profile || !groupId) return null;
 
   const firstName = profile.display_name?.split(" ")[0] ?? "there";
-  const greeting = getGreeting();
-
   const formattedDate = new Date().toLocaleDateString("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
+    weekday: "long", day: "numeric", month: "long",
   });
 
   const memberList = members.map((m) => ({
@@ -52,74 +49,67 @@ export default function HomePage() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.22, ease: "easeOut" }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
       className="flex flex-col max-w-lg mx-auto"
     >
-      {/* Hero banner */}
+      {/* ── Hero banner ───────────────────────────────────── */}
       <div
         className="relative w-full overflow-hidden"
-        style={{
-          height: 220,
-          background: bannerUrl
-            ? undefined
-            : "linear-gradient(145deg, #E8DFD0 0%, #D4C9B8 50%, #C9BC9E 100%)",
-        }}
+        style={{ height: 240 }}
       >
-        {bannerUrl && (
-          <img
-            src={bannerUrl}
-            alt=""
-            className="w-full h-full object-cover"
-          />
-        )}
-        {/* Gradient overlay for readability */}
+        {bannerUrl ? (
+          <img src={bannerUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        ) : null}
+
+        {/* Gradient — dark & rich with or without photo */}
         <div
           className="absolute inset-0"
           style={{
             background: bannerUrl
-              ? "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.35) 100%)"
-              : "linear-gradient(to bottom, rgba(44,40,32,0.02) 0%, rgba(44,40,32,0.12) 100%)",
+              ? "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.50) 100%)"
+              : "linear-gradient(155deg, #1E1811 0%, #3A2B1C 40%, #6B4422 75%, #9B6335 100%)",
           }}
         />
 
-        {/* Centered "us." logo */}
+        {/* "us." logotype */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <h1
-            className="font-display text-[58px] font-[300] tracking-[-2px] select-none"
+          <motion.h1
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.08, duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+            className="font-display font-[300] select-none"
             style={{
-              color: bannerUrl ? "rgba(255,255,255,0.95)" : "#2C2820",
-              textShadow: bannerUrl ? "0 2px 16px rgba(0,0,0,0.3)" : "none",
+              fontSize: 72,
+              letterSpacing: "-3px",
+              color: "rgba(255,255,255,0.95)",
+              textShadow: "0 2px 24px rgba(0,0,0,0.3)",
             }}
           >
             us.
-          </h1>
+          </motion.h1>
         </div>
 
-        {/* Settings button — top right */}
+        {/* Settings button */}
         <Link
           href="/settings"
-          className="absolute right-4"
+          className="absolute right-4 active:opacity-60 transition-opacity"
           style={{ top: "calc(env(safe-area-inset-top, 0px) + 14px)" }}
         >
           <div
-            className="w-9 h-9 rounded-full flex items-center justify-center transition-opacity active:opacity-60"
+            className="w-9 h-9 rounded-full flex items-center justify-center"
             style={{
-              background: bannerUrl ? "rgba(255,255,255,0.18)" : "rgba(44,40,32,0.08)",
-              backdropFilter: "blur(10px)",
-              WebkitBackdropFilter: "blur(10px)",
-              border: bannerUrl ? "0.5px solid rgba(255,255,255,0.25)" : "0.5px solid rgba(44,40,32,0.12)",
+              background: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              border: "1px solid rgba(255,255,255,0.20)",
             }}
           >
             <svg width="16" height="16" viewBox="0 0 22 22" fill="none">
-              <circle
-                cx="11" cy="11" r="2.5"
-                stroke={bannerUrl ? "rgba(255,255,255,0.9)" : "#2C2820"}
-                strokeWidth="1.3"
-              />
+              <circle cx="11" cy="11" r="2.5" stroke="rgba(255,255,255,0.9)" strokeWidth="1.4" />
               <path
                 d="M11 3V4.5M11 17.5V19M3 11H4.5M17.5 11H19M5.15 5.15L6.2 6.2M15.8 15.8L16.85 16.85M5.15 16.85L6.2 15.8M15.8 6.2L16.85 5.15"
-                stroke={bannerUrl ? "rgba(255,255,255,0.9)" : "#2C2820"}
-                strokeWidth="1.3"
+                stroke="rgba(255,255,255,0.9)"
+                strokeWidth="1.4"
                 strokeLinecap="round"
               />
             </svg>
@@ -127,37 +117,31 @@ export default function HomePage() {
         </Link>
       </div>
 
-      {/* Welcome text */}
-      <div className="px-5 pt-5 pb-1">
-        <p className="font-display text-[24px] font-[300] tracking-[-0.5px] text-ink leading-snug">
-          {greeting}, {firstName}.
-        </p>
-        <p className="text-[13px] text-ink3 mt-0.5">{formattedDate}</p>
+      {/* ── Welcome ───────────────────────────────────────── */}
+      <div className="px-5 pt-5 pb-2">
+        <h2 className="font-display text-[28px] font-[300] tracking-[-0.5px] text-ink leading-tight">
+          {getGreeting()}, {firstName}.
+        </h2>
+        <p className="text-[13px] text-ink3 mt-1">{formattedDate}</p>
       </div>
 
-      {/* Content */}
+      {/* ── Cards ─────────────────────────────────────────── */}
       <div className="px-4 pt-3 pb-8 flex flex-col gap-4">
-        {/* Mood check-in */}
-        <Card>
-          <MoodCheckin
-            groupId={groupId}
-            userId={user.id}
-            members={memberList}
-            inviteCode={group?.invite_code}
-          />
-        </Card>
 
-        {/* Post-it note */}
-        <PostItNote
+        {/* Mood */}
+        <MoodCheckin
           groupId={groupId}
           userId={user.id}
-          memberNames={memberNames}
+          members={memberList}
+          inviteCode={group?.invite_code}
         />
 
+        {/* Note */}
+        <PostItNote groupId={groupId} userId={user.id} memberNames={memberNames} />
+
         {/* Countdowns */}
-        <Card>
-          <CountdownCard groupId={groupId} userId={user.id} />
-        </Card>
+        <CountdownCard groupId={groupId} userId={user.id} />
+
       </div>
     </motion.div>
   );

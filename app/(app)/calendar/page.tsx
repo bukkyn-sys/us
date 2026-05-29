@@ -82,10 +82,10 @@ export default function CalendarPage() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
       className="flex flex-col max-w-lg mx-auto"
-      style={{ height: "calc(100vh - 56px)" }}
+      style={{ height: "calc(100dvh - 62px)" }}
     >
       {/* Header */}
-      <div className="flex-shrink-0 px-4 pt-12 pb-3 flex flex-col gap-4">
+      <div className="flex-shrink-0 px-4 pt-12 pb-3 flex flex-col gap-3">
         {/* Month navigation */}
         <div className="flex items-center gap-3">
           <motion.button
@@ -93,14 +93,14 @@ export default function CalendarPage() {
             disabled={!canGoPrev}
             whileTap={{ scale: 0.88 }}
             className="w-9 h-9 flex items-center justify-center rounded-full transition-colors disabled:opacity-25"
-            style={{ backgroundColor: "rgba(44,40,32,0.06)" }}
+            style={{ backgroundColor: "rgba(28,25,23,0.06)" }}
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M9 11L5 7L9 3" stroke="#2C2820" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M9 11L5 7L9 3" stroke="#1C1917" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </motion.button>
 
-          <h1 className="font-display text-[22px] font-[300] tracking-[-0.4px] text-ink text-center flex-1">
+          <h1 className="font-display text-[24px] font-[300] tracking-[-0.4px] text-ink text-center flex-1">
             {monthLabel}
           </h1>
 
@@ -109,10 +109,10 @@ export default function CalendarPage() {
             disabled={!canGoNext}
             whileTap={{ scale: 0.88 }}
             className="w-9 h-9 flex items-center justify-center rounded-full transition-colors disabled:opacity-25"
-            style={{ backgroundColor: "rgba(44,40,32,0.06)" }}
+            style={{ backgroundColor: "rgba(28,25,23,0.06)" }}
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M5 3L9 7L5 11" stroke="#2C2820" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M5 3L9 7L5 11" stroke="#1C1917" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </motion.button>
         </div>
@@ -126,7 +126,7 @@ export default function CalendarPage() {
           />
         )}
 
-        {/* Legend */}
+        {/* Legend + hint */}
         <div className="flex items-center gap-4">
           {[
             { colour: "#DCF0E1", label: "Free" },
@@ -136,15 +136,12 @@ export default function CalendarPage() {
             <div key={label} className="flex items-center gap-1.5">
               <span
                 className="rounded-[4px]"
-                style={{ width: 12, height: 12, backgroundColor: colour, border: "0.5px solid rgba(44,40,32,0.10)" }}
+                style={{ width: 11, height: 11, backgroundColor: colour, border: "0.5px solid rgba(28,25,23,0.10)" }}
               />
               <span className="text-[11px] text-ink3">{label}</span>
             </div>
           ))}
-          <div className="flex items-center gap-1.5 ml-auto">
-            <span className="w-[5px] h-[5px] rounded-full" style={{ backgroundColor: "#6A9E7A" }} />
-            <span className="text-[11px] text-ink3">Your day</span>
-          </div>
+          <span className="text-[11px] text-ink3 ml-auto">Tap to toggle</span>
         </div>
       </div>
 

@@ -4,23 +4,24 @@
 @tailwind utilities;
 
 :root {
-  --cream: #F5F0E8;
-  --cream2: #EDE8DF;
-  --cream3: #E3DDD3;
-  --ink: #2C2820;
-  --ink2: #6B6458;
-  --ink3: #9E9488;
-  --accent: #C4A882;
-  --accent-light: #EDE0CC;
-  --red: #D4645A;
-  --red-light: #FAE8E7;
-  --green: #6A9E7A;
-  --green-light: #E4F0E7;
-  --amber: #C9953A;
-  --amber-light: #FAF0DC;
-  --card: #FDFAF5;
-  --border: rgba(44, 40, 32, 0.12);
-  --border2: rgba(44, 40, 32, 0.07);
+  --cream: #F5F0EA;
+  --cream2: #EAE5DE;
+  --cream3: #DED8D0;
+  --ink: #1C1917;
+  --ink2: #6B6460;
+  --ink3: #AAA49E;
+  --accent: #C06B32;
+  --accent-light: #FBF0E6;
+  --red: #C04843;
+  --red-light: #FDECEA;
+  --green: #4D9163;
+  --green-light: #E6F5EE;
+  --amber: #C48832;
+  --amber-light: #FDF2E3;
+  --card: #FFFFFF;
+  --border: rgba(28, 25, 23, 0.08);
+  --border2: rgba(28, 25, 23, 0.05);
+  --shadow-card: 0 2px 16px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
 }
 
 * {
@@ -29,22 +30,20 @@
   box-sizing: border-box;
 }
 
-html,
-body {
-  background-color: #F5F0E8;
-  color: #2C2820;
-  font-size: 14px;
+html, body {
+  background-color: #F5F0EA;
+  color: #1C1917;
+  font-size: 15px;
   font-weight: 400;
   overscroll-behavior: none;
   margin: 0;
   padding: 0;
 }
 
-/* Force light mode always */
 @media (prefers-color-scheme: dark) {
   html, body {
-    background-color: #F5F0E8;
-    color: #2C2820;
+    background-color: #F5F0EA;
+    color: #1C1917;
   }
 }
 
@@ -55,6 +54,12 @@ body {
 ::-webkit-scrollbar {
   width: 0px;
   height: 0px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.5;
+  cursor: pointer;
+  filter: sepia(1) saturate(2) hue-rotate(330deg);
 }
 
 .safe-bottom {

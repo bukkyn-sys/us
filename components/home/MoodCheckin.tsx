@@ -12,6 +12,7 @@ import {
 import { Avatar } from "@/components/ui/Avatar";
 
 const EMOJIS = ["😔", "😕", "😐", "🙂", "😊"];
+const MOOD_LABELS = ["Rough", "Meh", "Okay", "Good", "Great"];
 
 function todayDate() {
   return new Date().toISOString().slice(0, 10);
@@ -27,7 +28,6 @@ interface MoodCheckinProps {
 export function MoodCheckin({ groupId, userId, members, inviteCode }: MoodCheckinProps) {
   const [checkins, setCheckins] = useState<MoodCheckinRow[]>([]);
   const [saving, setSaving] = useState(false);
-
   const date = todayDate();
 
   useEffect(() => {
@@ -36,6 +36,7 @@ export function MoodCheckin({ groupId, userId, members, inviteCode }: MoodChecki
 
   const myCheckin = checkins.find((c) => c.user_id === userId);
   const myMood = myCheckin?.emoji_index ?? null;
+  const otherMembers = members.filter((m) => m.user_id !== userId);
 
   async function handleTap(index: number) {
     if (saving) return;
@@ -51,28 +52,34 @@ export function MoodCheckin({ groupId, userId, members, inviteCode }: MoodChecki
     }
   }
 
-  const otherMembers = members.filter((m) => m.user_id !== userId);
-
   return (
-    <div className="flex flex-col gap-4">
-      {/* Label */}
-      <p className="text-[10px] font-[500] uppercase tracking-[0.08em] text-ink3">
-        How are you feeling?
-      </p>
+    <div
+      className="bg-card rounded-[18px] shadow-card overflow-hidden"
+    >
+      {/* Header strip */}
+      <div className="px-5 pt-4 pb-3 border-b border-[rgba(28,25,23,0.05)]">
+        <p className="text-[11px] font-[600] uppercase tracking-[0.08em] text-ink3">
+          How are you feeling?
+        </p>
+        {myMood !== null && (
+          <p className="text-[12px] text-ink2 mt-0.5">{MOOD_LABELS[myMood]} today</p>
+        )}
+      </div>
 
-      {/* Emoji selector */}
-      <div className="flex gap-2">
+      {/* Emoji row */}
+      <div className="px-4 py-4 flex gap-2">
         {EMOJIS.map((emoji, i) => (
           <motion.button
             key={i}
             onClick={() => handleTap(i)}
-            whileTap={{ scale: 1.25 }}
-            transition={{ duration: 0.12 }}
-            className="flex-1 flex items-center justify-center rounded-[10px] transition-colors"
+            whileTap={{ scale: 1.2 }}
+            transition={{ duration: 0.1 }}
+            className="flex-1 flex flex-col items-center justify-center rounded-[12px] gap-1 transition-all"
             style={{
-              height: 48,
-              backgroundColor: myMood === i ? "#EDE0CC" : "rgba(44,40,32,0.05)",
-              opacity: saving ? 0.6 : myMood !== null && myMood !== i ? 0.45 : 1,
+              height: 58,
+              backgroundColor: myMood === i ? "#FBF0E6" : "rgba(28,25,23,0.04)",
+              border: myMood === i ? "1.5px solid rgba(192,107,50,0.30)" : "1.5px solid transparent",
+              opacity: saving ? 0.5 : myMood !== null && myMood !== i ? 0.4 : 1,
             }}
           >
             <span className="text-[22px] leading-none select-none">{emoji}</span>
@@ -80,9 +87,9 @@ export function MoodCheckin({ groupId, userId, members, inviteCode }: MoodChecki
         ))}
       </div>
 
-      {/* Others' moods or invite prompt */}
+      {/* Others or invite */}
       {otherMembers.length > 0 ? (
-        <div className="flex flex-col gap-2.5 pt-0.5">
+        <div className="px-5 pb-4 pt-1 flex flex-col gap-3 border-t border-[rgba(28,25,23,0.05)]">
           {otherMembers.map((m) => {
             const checkin = checkins.find((c) => c.user_id === m.user_id);
             const mood = checkin?.emoji_index ?? null;
@@ -92,16 +99,21 @@ export function MoodCheckin({ groupId, userId, members, inviteCode }: MoodChecki
                   src={m.profile?.photo_url}
                   name={m.profile?.display_name || "?"}
                   accentColour={m.profile?.accent_colour}
-                  size={30}
+                  size={32}
                 />
-                <span className="text-[13px] text-ink2 flex-1">
-                  {m.profile?.display_name?.split(" ")[0] || "Them"}
-                </span>
+                <div className="flex-1">
+                  <p className="text-[13px] font-[500] text-ink leading-none">
+                    {m.profile?.display_name?.split(" ")[0] || "Them"}
+                  </p>
+                  <p className="text-[11px] text-ink3 mt-0.5">
+                    {mood !== null ? MOOD_LABELS[mood] : "Hasn't checked in"}
+                  </p>
+                </div>
                 <span
-                  className="text-[22px] leading-none"
-                  style={{ opacity: mood === null ? 0.25 : 1 }}
+                  className="text-[24px] leading-none"
+                  style={{ opacity: mood === null ? 0.2 : 1 }}
                 >
-                  {mood !== null ? EMOJIS[mood] : "—"}
+                  {mood !== null ? EMOJIS[mood] : "·"}
                 </span>
               </div>
             );
@@ -109,14 +121,16 @@ export function MoodCheckin({ groupId, userId, members, inviteCode }: MoodChecki
         </div>
       ) : inviteCode ? (
         <div
-          className="rounded-[10px] px-4 py-3 flex items-center justify-between"
-          style={{ backgroundColor: "rgba(44,40,32,0.04)" }}
+          className="mx-4 mb-4 rounded-[12px] px-4 py-3 flex items-center justify-between"
+          style={{ background: "linear-gradient(135deg, #FBF0E6 0%, #F5E8D5 100%)" }}
         >
           <div>
-            <p className="text-[12px] font-[500] text-ink">Invite someone</p>
-            <p className="text-[11px] text-ink3 mt-0.5">Share your group code</p>
+            <p className="text-[12px] font-[600] text-ink">Invite your partner</p>
+            <p className="text-[11px] text-ink3 mt-0.5">Share this code</p>
           </div>
-          <p className="text-[18px] font-[500] tracking-[0.25em] text-ink">{inviteCode}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-[20px] font-[600] tracking-[0.22em] text-ink">{inviteCode}</p>
+          </div>
         </div>
       ) : null}
     </div>

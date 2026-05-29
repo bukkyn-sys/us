@@ -65,9 +65,7 @@ export default function ListsPage() {
         className="px-4 pt-12 pb-6 flex flex-col gap-4 max-w-lg mx-auto"
       >
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="font-display text-[26px] font-[300] tracking-[-0.5px] text-ink">Lists</h1>
-        </div>
+        <h1 className="font-display text-[28px] font-[300] tracking-[-0.5px] text-ink">Lists</h1>
 
         {/* Filter by person */}
         <FilterPills options={filterOptions} value={filter} onChange={setFilter} />
@@ -78,10 +76,10 @@ export default function ListsPage() {
             <button
               key={s.value}
               onClick={() => setSort(s.value)}
-              className="flex-shrink-0 text-[11px] font-[500] px-3 py-1.5 rounded-full transition-colors whitespace-nowrap"
+              className="flex-shrink-0 text-[12px] font-[500] px-3 py-1.5 rounded-full transition-colors whitespace-nowrap"
               style={{
-                backgroundColor: sort === s.value ? "#2C2820" : "rgba(44,40,32,0.07)",
-                color: sort === s.value ? "#F5F0E8" : "#6B6458",
+                backgroundColor: sort === s.value ? "#1C1917" : "rgba(28,25,23,0.07)",
+                color: sort === s.value ? "#F5F0EA" : "#6B6460",
               }}
             >
               {s.label}
@@ -91,9 +89,10 @@ export default function ListsPage() {
 
         {/* Empty state */}
         {sortItems(active).length === 0 && (
-          <div className="flex flex-col items-center gap-2 py-10">
-            <p className="text-[13px] text-ink3">Nothing here yet.</p>
-            <p className="text-[12px] text-ink3">Tap + to add your first item.</p>
+          <div className="flex flex-col items-center gap-3 py-12">
+            <span className="text-[40px]">🎁</span>
+            <p className="text-[15px] font-[400] text-ink2">Your list is empty</p>
+            <p className="text-[13px] text-ink3 text-center max-w-[200px]">Add things you want and share them with your group.</p>
           </div>
         )}
 
@@ -121,7 +120,7 @@ export default function ListsPage() {
         {/* Gifted section */}
         {gifted.length > 0 && (
           <div className="flex flex-col gap-2">
-            <p className="text-[10px] font-[500] uppercase tracking-[0.08em] text-ink3 mt-2">Gifted</p>
+            <p className="text-[11px] font-[600] uppercase tracking-[0.08em] text-ink3 mt-2">Gifted</p>
             {sortItems(gifted).map((item) => (
               <WishItem
                 key={item.id}
@@ -137,18 +136,18 @@ export default function ListsPage() {
       <motion.button
         onClick={() => setShowAdd(true)}
         whileTap={{ scale: 0.91 }}
-        className="fixed right-4 z-40 flex items-center gap-2 pl-3 pr-4 rounded-full shadow-lg"
+        className="fixed right-4 z-40 flex items-center gap-2 pl-4 pr-5 rounded-full"
         style={{
           bottom: "calc(72px + env(safe-area-inset-bottom, 0px))",
-          backgroundColor: "#2C2820",
-          height: 48,
-          boxShadow: "0 4px 16px rgba(44,40,32,0.28)",
+          backgroundColor: "#C06B32",
+          height: 50,
+          boxShadow: "0 6px 24px rgba(28,25,23,0.22)",
         }}
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M8 3V13M3 8H13" stroke="#F5F0E8" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M8 3V13M3 8H13" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" />
         </svg>
-        <span className="text-[13px] font-[500] text-cream">Add item</span>
+        <span className="text-[13px] font-[600] text-white">Add item</span>
       </motion.button>
 
       {/* Add modal */}

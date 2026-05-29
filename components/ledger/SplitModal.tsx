@@ -49,7 +49,7 @@ export function SplitModal({ groupId, userId, members, onClose }: SplitModalProp
   async function handleSave() {
     setError("");
     if (!title.trim() || !total || totalNum <= 0) { setError("Fill in title and amount."); return; }
-    if (selectedMembers.length === 0) { setError("Select at least one member."); return; }
+    if (selectedMembers.length === 0) { setError("Select at least one person."); return; }
     const sum = pctTotal();
     if (Math.abs(sum - 100) > 0.1) { setError(`Percentages must total 100% (currently ${sum.toFixed(1)}%).`); return; }
 
@@ -100,7 +100,7 @@ export function SplitModal({ groupId, userId, members, onClose }: SplitModalProp
         >
           {/* Handle */}
           <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-            <div className="w-10 h-1 rounded-full" style={{ backgroundColor: "rgba(44,40,32,0.15)" }} />
+            <div className="w-10 h-1 rounded-full" style={{ backgroundColor: "rgba(28,25,23,0.15)" }} />
           </div>
 
           {/* Scrollable body */}
@@ -110,10 +110,10 @@ export function SplitModal({ groupId, userId, members, onClose }: SplitModalProp
               <button
                 onClick={onClose}
                 className="w-8 h-8 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: "rgba(44,40,32,0.06)" }}
+                style={{ backgroundColor: "rgba(28,25,23,0.06)" }}
               >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M3 3L11 11M11 3L3 11" stroke="#9E9488" strokeWidth="1.3" strokeLinecap="round" />
+                  <path d="M3 3L11 11M11 3L3 11" stroke="#AAA49E" strokeWidth="1.3" strokeLinecap="round" />
                 </svg>
               </button>
             </div>
@@ -126,7 +126,7 @@ export function SplitModal({ groupId, userId, members, onClose }: SplitModalProp
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="What for?"
                 autoFocus
-                className="flex-1 bg-cream2 rounded-[10px] px-3 py-3 text-[14px] text-ink placeholder:text-ink3 border-[0.5px] border-[rgba(44,40,32,0.12)] outline-none focus:border-accent transition-colors"
+                className="flex-1 bg-cream2 rounded-[10px] px-3 py-3 text-[14px] text-ink placeholder:text-ink3 border border-[rgba(28,25,23,0.08)] outline-none focus:border-accent transition-colors"
               />
               <div className="relative w-28">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[14px] text-ink3">£</span>
@@ -137,14 +137,14 @@ export function SplitModal({ groupId, userId, members, onClose }: SplitModalProp
                   placeholder="0.00"
                   min="0"
                   step="0.01"
-                  className="w-full bg-cream2 rounded-[10px] pl-6 pr-3 py-3 text-[14px] text-ink border-[0.5px] border-[rgba(44,40,32,0.12)] outline-none focus:border-accent transition-colors"
+                  className="w-full bg-cream2 rounded-[10px] pl-7 pr-3 py-3 text-[14px] text-ink border border-[rgba(28,25,23,0.08)] outline-none focus:border-accent transition-colors"
                 />
               </div>
             </div>
 
             {/* Paid by */}
             <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-[600] uppercase tracking-[0.1em] text-ink3">Paid by</label>
+              <label className="text-[12px] font-[500] text-ink2">Paid by</label>
               <div className="flex gap-2 flex-wrap">
                 {members.map((m) => (
                   <button
@@ -152,12 +152,12 @@ export function SplitModal({ groupId, userId, members, onClose }: SplitModalProp
                     onClick={() => setPaidBy(m.user_id)}
                     className="flex items-center gap-2 px-3 py-2 rounded-full transition-colors"
                     style={{
-                      backgroundColor: paidBy === m.user_id ? "#2C2820" : "rgba(44,40,32,0.07)",
+                      backgroundColor: paidBy === m.user_id ? "#1C1917" : "rgba(28,25,23,0.07)",
                     }}
                   >
                     <Avatar src={m.profile?.photo_url} name={m.profile?.display_name || "?"} accentColour={m.profile?.accent_colour} size={20} />
-                    <span className="text-[12px] font-[500]" style={{ color: paidBy === m.user_id ? "#F5F0E8" : "#6B6458" }}>
-                      {m.profile?.display_name?.split(" ")[0] || "?"}
+                    <span className="text-[12px] font-[500]" style={{ color: paidBy === m.user_id ? "#F5F0EA" : "#6B6460" }}>
+                      {m.user_id === userId ? "You" : (m.profile?.display_name?.split(" ")[0] || "?")}
                     </span>
                   </button>
                 ))}
@@ -167,7 +167,7 @@ export function SplitModal({ groupId, userId, members, onClose }: SplitModalProp
             {/* Split between */}
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
-                <label className="text-[10px] font-[600] uppercase tracking-[0.1em] text-ink3">Split between</label>
+                <label className="text-[12px] font-[500] text-ink2">Split between</label>
                 <button
                   onClick={equalSplit}
                   className="text-[12px] font-[500] text-accent active:opacity-60 transition-opacity"
@@ -183,19 +183,21 @@ export function SplitModal({ groupId, userId, members, onClose }: SplitModalProp
                       <div
                         className="w-5 h-5 rounded-[5px] flex items-center justify-center transition-colors"
                         style={{
-                          backgroundColor: active ? "#2C2820" : "transparent",
-                          border: active ? "none" : "1px solid rgba(44,40,32,0.25)",
+                          backgroundColor: active ? "#1C1917" : "transparent",
+                          border: active ? "none" : "1px solid rgba(28,25,23,0.25)",
                         }}
                       >
                         {active && (
                           <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                            <path d="M2 5L4.5 7.5L8 3" stroke="#F5F0E8" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M2 5L4.5 7.5L8 3" stroke="#F5F0EA" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
                           </svg>
                         )}
                       </div>
                     </button>
                     <Avatar src={m.profile?.photo_url} name={m.profile?.display_name || "?"} accentColour={m.profile?.accent_colour} size={26} />
-                    <span className="flex-1 text-[13px] text-ink">{m.profile?.display_name?.split(" ")[0] || "?"}</span>
+                    <span className="flex-1 text-[13px] text-ink">
+                      {m.user_id === userId ? "You" : (m.profile?.display_name?.split(" ")[0] || "?")}
+                    </span>
                     {active && (
                       <>
                         <div className="relative w-[68px]">
@@ -206,7 +208,7 @@ export function SplitModal({ groupId, userId, members, onClose }: SplitModalProp
                             min="0"
                             max="100"
                             step="0.1"
-                            className="w-full bg-cream2 rounded-[8px] px-2 py-1.5 text-[13px] text-ink text-right border-[0.5px] border-[rgba(44,40,32,0.12)] outline-none pr-5"
+                            className="w-full bg-cream2 rounded-[8px] px-2 py-1.5 text-[13px] text-ink text-right border border-[rgba(28,25,23,0.08)] outline-none pr-5"
                           />
                           <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[11px] text-ink3">%</span>
                         </div>
@@ -222,7 +224,7 @@ export function SplitModal({ groupId, userId, members, onClose }: SplitModalProp
                 <span
                   className="text-[11px] font-[500] px-2.5 py-1 rounded-full"
                   style={{
-                    backgroundColor: pctOk ? "#E4F0E7" : "#FAE8E7",
+                    backgroundColor: pctOk ? "#E6F5EE" : "#FDECEA",
                     color: pctOk ? "#3A7A50" : "#A84040",
                   }}
                 >
@@ -232,7 +234,7 @@ export function SplitModal({ groupId, userId, members, onClose }: SplitModalProp
             </div>
 
             {error && (
-              <p className="text-[13px] text-red rounded-[8px] bg-red-light px-3 py-2">{error}</p>
+              <p className="text-[13px] text-[#C04843] rounded-[8px] bg-[#FDECEA] px-3 py-2">{error}</p>
             )}
 
             <Button onClick={handleSave} disabled={saving}>

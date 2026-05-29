@@ -36,18 +36,18 @@ export function DayCell({
   return (
     <motion.button
       onClick={tappable ? onClick : undefined}
-      whileTap={tappable ? { scale: 0.86 } : undefined}
+      whileTap={tappable ? { scale: 0.84 } : undefined}
       transition={{ duration: 0.1 }}
       className="relative flex flex-col items-center justify-center aspect-square select-none"
       style={{
         cursor: tappable ? "pointer" : "default",
-        opacity: !isCurrentMonth ? 0.18 : isPast ? 0.38 : 1,
+        opacity: !isCurrentMonth ? 0.18 : isPast ? 0.5 : 1,
       }}
     >
       {/* Background tile */}
       <motion.span
         className="absolute inset-[2px] rounded-[9px]"
-        animate={{ backgroundColor: bg }}
+        animate={{ backgroundColor: isToday && colour === "none" ? "#FBF0E6" : bg }}
         transition={{ duration: 0.14 }}
       />
 
@@ -55,7 +55,7 @@ export function DayCell({
       {isToday && (
         <span
           className="absolute inset-[2px] rounded-[9px]"
-          style={{ border: "1.5px solid #C4A882" }}
+          style={{ border: "1.5px solid rgba(192,107,50,0.45)" }}
         />
       )}
 
@@ -64,8 +64,8 @@ export function DayCell({
         className="relative z-10 leading-none"
         style={{
           fontSize: 13,
-          fontWeight: isToday ? 600 : 400,
-          color: isToday ? "#C4A882" : "#2C2820",
+          fontWeight: isToday ? 700 : 400,
+          color: isToday ? "#C06B32" : "#1C1917",
         }}
       >
         {day}
@@ -78,7 +78,7 @@ export function DayCell({
           style={{
             width: 4,
             height: 4,
-            backgroundColor: myStatus === "free" ? "#6A9E7A" : "#D4645A",
+            backgroundColor: myStatus === "free" ? "#4D9163" : "#C04843",
           }}
         />
       )}

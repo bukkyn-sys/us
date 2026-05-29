@@ -37,10 +37,14 @@ export default function LedgerPage() {
 
   const balance = netBalance();
 
-  const memberList = members.map((m) => ({
+  const rawMemberList = members.map((m) => ({
     user_id: m.user_id,
-    profile: memberProfiles[m.user_id],
+    profile: memberProfiles[m.user_id] ?? null,
   }));
+  // Always ensure current user appears (handles solo / loading state)
+  const memberList = rawMemberList.some((m) => m.user_id === user.id)
+    ? rawMemberList
+    : [{ user_id: user.id, profile }, ...rawMemberList];
 
   const filteredExpenses = expenses.filter((e) => {
     if (filter === "i_paid") return e.paid_by === user.id;
@@ -62,7 +66,7 @@ export default function LedgerPage() {
         className="px-4 pt-12 pb-8 flex flex-col gap-4 max-w-lg mx-auto"
       >
         {/* Header */}
-        <h1 className="font-display text-[26px] font-[300] tracking-[-0.5px] text-ink">Ledger</h1>
+        <h1 className="font-display text-[28px] font-[300] tracking-[-0.5px] text-ink">Ledger</h1>
 
         {/* Tab toggle */}
         <SegmentedControl
@@ -78,18 +82,26 @@ export default function LedgerPage() {
           <>
             {/* Balance hero */}
             <div
-              className="rounded-[16px] px-5 py-4"
-              style={{ backgroundColor: balance >= 0 ? "#E4F0E7" : "#FAE8E7" }}
+              className="rounded-[18px] px-5 py-4"
+              style={{
+                backgroundColor: balance > 0 ? "#E6F5EE" : balance < 0 ? "#FDECEA" : "rgba(28,25,23,0.04)",
+              }}
             >
-              <p className="text-[11px] font-[500] uppercase tracking-[0.1em]" style={{ color: balance >= 0 ? "#4A7E5A" : "#A84040" }}>
+              <p
+                className="text-[11px] font-[600] uppercase tracking-[0.08em]"
+                style={{ color: balance > 0 ? "#4D9163" : balance < 0 ? "#C04843" : "#AAA49E" }}
+              >
                 {balance > 0 ? "You are owed" : balance < 0 ? "You owe" : "All settled"}
               </p>
               <p
-                className="text-[32px] font-[300] tracking-[-1px] mt-1"
-                style={{ color: balance >= 0 ? "#2C6040" : "#8C2020" }}
+                className="font-display text-[36px] font-[300] tracking-[-1px] mt-1"
+                style={{ color: balance > 0 ? "#2C6040" : balance < 0 ? "#8C2020" : "#1C1917" }}
               >
-                {balance === 0 ? "—" : `${balance >= 0 ? "+" : ""}${formatCurrency(Math.abs(balance))}`}
+                {balance === 0 ? "£0.00" : `${balance > 0 ? "+" : ""}${formatCurrency(Math.abs(balance))}`}
               </p>
+              {balance === 0 && (
+                <p className="text-[12px] text-ink3 mt-0.5">You're all square</p>
+              )}
             </div>
 
             {/* Filter */}
@@ -100,8 +112,8 @@ export default function LedgerPage() {
                   onClick={() => setFilter(f.value)}
                   className="px-4 py-2 rounded-full text-[12px] font-[500] transition-colors"
                   style={{
-                    backgroundColor: filter === f.value ? "#2C2820" : "rgba(44,40,32,0.07)",
-                    color: filter === f.value ? "#F5F0E8" : "#6B6458",
+                    backgroundColor: filter === f.value ? "#1C1917" : "rgba(28,25,23,0.07)",
+                    color: filter === f.value ? "#F5F0EA" : "#6B6460",
                   }}
                 >
                   {f.label}
@@ -110,8 +122,10 @@ export default function LedgerPage() {
             </div>
 
             {filteredExpenses.length === 0 && (
-              <div className="py-8 text-center">
-                <p className="text-[13px] text-ink3">No expenses yet.</p>
+              <div className="flex flex-col items-center gap-3 py-12">
+                <span className="text-[40px]">🧾</span>
+                <p className="text-[15px] font-[400] text-ink2">No expenses yet</p>
+                <p className="text-[13px] text-ink3 text-center max-w-[200px]">Add your first shared expense to start tracking.</p>
               </div>
             )}
 
@@ -142,20 +156,22 @@ export default function LedgerPage() {
         {tab === "savings" && (
           <>
             <div className="flex items-center justify-between">
-              <p className="text-[10px] font-[500] uppercase tracking-[0.08em] text-ink3">Saving pots</p>
+              <p className="text-[11px] font-[600] uppercase tracking-[0.08em] text-ink3">Saving pots</p>
               <motion.button
                 onClick={() => setShowAddPot(true)}
                 whileTap={{ scale: 0.92 }}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-full text-[12px] font-[500]"
-                style={{ backgroundColor: "#2C2820", color: "#F5F0E8" }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-[500]"
+                style={{ backgroundColor: "#C06B32", color: "#FFFFFF" }}
               >
                 <span style={{ fontSize: 14, lineHeight: 1 }}>+</span> New pot
               </motion.button>
             </div>
 
             {savingPots.length === 0 && (
-              <div className="py-8 text-center">
-                <p className="text-[13px] text-ink3">No saving pots yet.</p>
+              <div className="flex flex-col items-center gap-3 py-12">
+                <span className="text-[40px]">🏦</span>
+                <p className="text-[15px] font-[400] text-ink2">No saving pots yet</p>
+                <p className="text-[13px] text-ink3 text-center max-w-[200px]">Create a pot to track savings towards a shared goal.</p>
               </div>
             )}
             <div className="flex flex-col gap-2.5">
@@ -172,18 +188,18 @@ export default function LedgerPage() {
         <motion.button
           onClick={() => setShowAdd(true)}
           whileTap={{ scale: 0.91 }}
-          className="fixed right-4 z-40 flex items-center gap-2 pl-3 pr-4 rounded-full"
+          className="fixed right-4 z-40 flex items-center gap-2 pl-4 pr-5 rounded-full"
           style={{
             bottom: "calc(72px + env(safe-area-inset-bottom, 0px))",
-            backgroundColor: "#2C2820",
-            height: 48,
-            boxShadow: "0 4px 16px rgba(44,40,32,0.28)",
+            backgroundColor: "#C06B32",
+            height: 50,
+            boxShadow: "0 6px 24px rgba(28,25,23,0.22)",
           }}
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M8 3V13M3 8H13" stroke="#F5F0E8" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M8 3V13M3 8H13" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" />
           </svg>
-          <span className="text-[13px] font-[500] text-cream">Add expense</span>
+          <span className="text-[13px] font-[600] text-white">Add expense</span>
         </motion.button>
       )}
 
@@ -265,7 +281,7 @@ function AddPotModal({
       >
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-2">
-          <div className="w-10 h-1 rounded-full" style={{ backgroundColor: "rgba(44,40,32,0.15)" }} />
+          <div className="w-10 h-1 rounded-full" style={{ backgroundColor: "rgba(28,25,23,0.15)" }} />
         </div>
 
         <div className="flex flex-col gap-5 px-5 pb-2">
@@ -274,28 +290,28 @@ function AddPotModal({
             <button
               onClick={onClose}
               className="w-8 h-8 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: "rgba(44,40,32,0.06)" }}
+              style={{ backgroundColor: "rgba(28,25,23,0.06)" }}
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M3 3L11 11M11 3L3 11" stroke="#9E9488" strokeWidth="1.3" strokeLinecap="round" />
+                <path d="M3 3L11 11M11 3L3 11" stroke="#AAA49E" strokeWidth="1.3" strokeLinecap="round" />
               </svg>
             </button>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-[600] uppercase tracking-[0.1em] text-ink3">Name</label>
+            <label className="text-[12px] font-[500] text-ink2">Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Holiday fund"
               autoFocus
-              className="bg-cream2 rounded-[10px] px-3 py-3 text-[14px] text-ink placeholder:text-ink3 border-[0.5px] border-[rgba(44,40,32,0.12)] outline-none focus:border-accent transition-colors"
+              className="bg-cream2 rounded-[10px] px-3 py-3 text-[14px] text-ink placeholder:text-ink3 border border-[rgba(28,25,23,0.08)] outline-none focus:border-accent transition-colors"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-[600] uppercase tracking-[0.1em] text-ink3">Goal amount (optional)</label>
+            <label className="text-[12px] font-[500] text-ink2">Goal amount <span className="text-ink3 font-[400]">(optional)</span></label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[14px] text-ink3">£</span>
               <input
@@ -305,7 +321,7 @@ function AddPotModal({
                 placeholder="0.00"
                 min="0"
                 step="0.01"
-                className="w-full bg-cream2 rounded-[10px] pl-7 pr-3 py-3 text-[14px] text-ink border-[0.5px] border-[rgba(44,40,32,0.12)] outline-none focus:border-accent transition-colors"
+                className="w-full bg-cream2 rounded-[10px] pl-7 pr-3 py-3 text-[14px] text-ink border border-[rgba(28,25,23,0.08)] outline-none focus:border-accent transition-colors"
               />
             </div>
           </div>
@@ -313,7 +329,7 @@ function AddPotModal({
           <button
             onClick={handleSave}
             disabled={!name.trim() || saving}
-            className="w-full bg-ink text-cream rounded-[14px] py-[14px] text-[14px] font-[500] disabled:opacity-35 active:opacity-70 transition-opacity"
+            className="w-full bg-ink text-cream rounded-[14px] py-[14px] text-[14px] font-[500] disabled:opacity-25 active:opacity-70 transition-opacity"
           >
             {saving ? "Creating…" : "Create pot"}
           </button>

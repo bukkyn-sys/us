@@ -100,7 +100,7 @@ export default function LedgerPage() {
                 {balance === 0 ? "£0.00" : `${balance > 0 ? "+" : ""}${formatCurrency(Math.abs(balance))}`}
               </p>
               {balance === 0 && (
-                <p className="text-[12px] text-ink3 mt-0.5">You're all square</p>
+                <p className="text-[12px] text-ink3 mt-0.5">You&apos;re all square</p>
               )}
             </div>
 
